@@ -4,92 +4,79 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#070b14" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>LedgerBook Pro</title>
   <style>
     :root {
       --bg: #070b14; --surface: #151923; --surface-2: #1d2230;
       --line: #2a3142; --text: #eef2ff; --muted: #a6adbb;
       --green: #22c55e; --red: #ff5b5b; --blue: #2ea3ff;
+      --orange: #f39c12;
       --radius: 14px;
     }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-    body { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, system-ui, sans-serif; padding: 15px 15px 100px; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; padding: 15px 15px 100px; }
     .hidden { display: none !important; }
     
-    /* Top Navigation */
+    /* UI Elements */
     .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .dev-credit { color: var(--muted); font-size: 0.75rem; font-weight: 500; }
-
-    /* Monthly Filter Heading */
     .filter-header { background: var(--surface); padding: 12px; border-radius: 12px; border: 1px solid var(--line); margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-    .filter-header h2 { margin: 0; font-size: 1rem; color: var(--muted); text-transform: uppercase; }
     .month-select { background: transparent; border: none; color: var(--blue); font-weight: 800; font-size: 1.1rem; cursor: pointer; }
-
-    /* Dashboard Cards */
+    
     .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
     .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
     .card.full { grid-column: 1 / -1; }
-    .label { color: var(--muted); font-size: 0.65rem; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; display: block; }
-    .val-inc { color: var(--green); font-size: 1.3rem; font-weight: 800; }
-    .val-exp { color: var(--red); font-size: 1.3rem; font-weight: 800; }
-    .val-sav { color: var(--blue); font-size: 1.3rem; font-weight: 800; }
-
+    .label { color: var(--muted); font-size: 0.65rem; text-transform: uppercase; font-weight: 700; display: block; }
+    
     /* Transactions */
-    .section-header { font-size: 1.1rem; font-weight: 700; margin: 15px 0 10px; }
-    .search-input { width: 100%; background: var(--surface-2); border: 1px solid var(--line); padding: 12px; border-radius: 12px; color: white; margin-bottom: 10px; font-size: 15px; }
     .tx-item { background: var(--surface); border: 1px solid var(--line); padding: 12px; border-radius: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
 
-    /* One-Page Scroll-Free Modal */
-    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); display: flex; align-items: flex-end; z-index: 1000; }
-    .modal { width: 100%; background: #0d1118; border-radius: 20px 20px 0 0; padding: 15px; max-height: 98vh; border-top: 1px solid var(--line); overflow: hidden; }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .form-group { margin-bottom: 8px; width: 100%; display: flex; flex-direction: column; }
+    /* Full-Screen Modal */
+    .modal-backdrop { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: flex; flex-direction: column; overflow-y: auto; }
+    .modal { width: 100%; padding: 20px; flex: 1; }
+    
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-group { margin-bottom: 15px; }
     
     input, select, textarea { 
       width: 100%; background: var(--surface-2); border: 1px solid var(--line); color: white; 
-      height: 42px; padding: 0 10px; border-radius: 10px; font-size: 15px; margin-top: 2px;
+      height: 48px; padding: 0 12px; border-radius: 10px; font-size: 16px; margin-top: 4px;
     }
-    textarea { height: 45px; padding: 8px; resize: none; }
-    
-    /* Date field fix */
-    input[type="date"] { appearance: none; -webkit-appearance: none; }
 
-    .primary-btn { background: var(--blue); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 700; width: 100%; font-size: 1rem; margin-top: 5px; }
-    .icon-btn { background: var(--surface); border: 1px solid var(--line); color: var(--text); padding: 8px 10px; border-radius: 10px; }
-
-    /* Security PIN Pad */
-    .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 15px; }
-    .pin-btn { background: var(--surface-2); border: 1px solid var(--line); color: white; padding: 18px; border-radius: 14px; font-size: 1.3rem; font-weight: bold; }
+    .primary-btn { background: var(--blue); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 700; width: 100%; font-size: 1rem; margin-top: 10px; }
+    .icon-btn { background: var(--surface); border: 1px solid var(--line); color: var(--text); padding: 8px 12px; border-radius: 10px; position: relative; }
     
-    /* Charts */
-    .chart-box { background: var(--surface); border: 1px solid var(--line); padding: 12px; border-radius: var(--radius); margin-bottom: 12px; }
-    .bar-wrap { display: flex; align-items: center; margin-top: 8px; gap: 8px; font-size: 0.8rem; }
-    .bar-bg { flex: 1; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
-    .bar-fill { height: 100%; background: var(--blue); }
+    /* Notification Badge */
+    .badge { position: absolute; top: -5px; right: -5px; width: 12px; height: 12px; background: var(--orange); border-radius: 50%; border: 2px solid var(--bg); }
+    .backup-alert { background: rgba(243, 156, 18, 0.1); border: 1px solid var(--orange); color: var(--orange); padding: 10px; border-radius: 10px; margin-bottom: 15px; font-size: 0.85rem; text-align: center; }
+
+    /* Security */
+    .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
+    .pin-btn { background: var(--surface-2); border: 1px solid var(--line); color: white; padding: 20px; border-radius: 14px; font-size: 1.5rem; font-weight: bold; }
   </style>
 </head>
 <body>
 
-  <div id="lockScreen" class="modal-backdrop hidden" style="height: 100%; align-items: center; justify-content: center;">
-    <div class="modal" style="text-align: center; border-radius: 25px; max-width: 380px;">
-      <h2 id="lockTitle">Secure Entry</h2>
-      <div id="pinDots" style="font-size: 2rem; margin: 10px 0; letter-spacing: 8px; color: var(--blue);">----</div>
+  <div id="lockScreen" class="modal-backdrop hidden" style="align-items: center; justify-content: center;">
+    <div style="text-align: center; width: 90%; max-width: 380px;">
+      <h2>Secure Entry</h2>
+      <div id="pinDots" style="font-size: 2rem; margin: 15px 0; letter-spacing: 8px; color: var(--blue);">----</div>
       <div class="pin-pad" id="pinKeys"></div>
-      <button onclick="handleRecovery()" style="background:none; border:none; color:var(--muted); margin-top:15px; text-decoration: underline;">Forgot PIN?</button>
+      <button onclick="handleRecovery()" style="background:none; border:none; color:var(--muted); margin-top:20px; text-decoration: underline;">Forgot PIN?</button>
     </div>
   </div>
 
   <div id="app">
     <div class="topbar">
       <div>
-        <h1 style="margin:0; font-size: 1.4rem;">LedgerBook</h1>
-        <span class="dev-credit">Shriganesh Manurkar</span>
+        <h1 style="margin:0; font-size: 1.5rem;">LedgerBook</h1>
+        <span class="dev-credit">Developed by Shriganesh Manurkar</span>
       </div>
       <div style="display:flex; gap:8px;">
         <button class="icon-btn" onclick="renderAnalytics(); toggleModal('reportsModal');">📊</button>
-        <button class="icon-btn" onclick="toggleModal('settingsModal')">⚙️</button>
+        <button class="icon-btn" onclick="toggleModal('settingsModal')">
+            ⚙️
+            <div id="settingsBadge" class="badge hidden"></div>
+        </button>
       </div>
     </div>
 
@@ -99,89 +86,133 @@
     </div>
 
     <div class="cards">
-      <div class="card"><span class="label">Inc</span><div class="val-inc" id="hInc">₹0</div></div>
-      <div class="card"><span class="label">Exp</span><div class="val-exp" id="hExp">₹0</div></div>
-      <div class="card full"><span class="label">Net Savings</span><div class="val-sav" id="hSav">₹0</div></div>
+      <div class="card"><span class="label">Total Income</span><div id="hInc" style="color:var(--green); font-size:1.3rem; font-weight:800;">₹0</div></div>
+      <div class="card"><span class="label">Total Expense</span><div id="hExp" style="color:var(--red); font-size:1.3rem; font-weight:800;">₹0</div></div>
+      <div class="card full"><span class="label">Net Savings</span><div id="hSav" style="color:var(--blue); font-size:1.3rem; font-weight:800;">₹0</div></div>
     </div>
 
-    <div class="section-header">Transactions</div>
-    <input type="text" id="txSearch" class="search-input" placeholder="Search..." oninput="refreshUI()">
     <div id="txList"></div>
   </div>
 
-  <div id="reportsModal" class="modal-backdrop hidden">
-    <div class="modal" style="max-height: 90vh; overflow-y: auto;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
-        <h2>Top 5 Expenses</h2>
-        <button class="icon-btn" onclick="toggleModal('reportsModal')">✕</button>
+  <div id="settingsModal" class="modal-backdrop hidden">
+    <div class="modal">
+      <h2>Settings</h2>
+      
+      <div id="backupReminder" class="backup-alert hidden">
+        ⚠️ It's been over a week since your last backup. Please export your data to keep it safe.
       </div>
-      <div id="analyticsContent"></div>
-      <button class="primary-btn" onclick="toggleModal('reportsModal')">Close</button>
+
+      <div class="form-group"><span class="label">App PIN</span><input type="password" id="setPin" maxlength="4"></div>
+      <div id="qSection">
+        <div class="form-group"><span class="label">Security Question</span><input type="text" id="setQ"></div>
+        <div class="form-group"><span class="label">Answer</span><input type="text" id="setA"></div>
+      </div>
+      <button class="primary-btn" onclick="saveSettings()">Save Security</button>
+      
+      <hr style="border:0; border-top:1px solid var(--line); margin:20px 0;">
+      
+      <h3>Data Management</h3>
+      <button class="primary-btn" style="background:var(--green)" onclick="exportJSON()">Backup Data (JSON)</button>
+      <div style="margin-top:15px;">
+        <span class="label">Restore from File</span>
+        <input type="file" onchange="importJSON(event)">
+      </div>
+      <button class="primary-btn" onclick="toggleModal('settingsModal')" style="background:none">Close</button>
     </div>
   </div>
 
   <div id="entryModal" class="modal-backdrop hidden">
     <div class="modal">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <h2 id="modalTitle" style="margin:0; font-size: 1.1rem;">Record Entry</h2>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2 id="modalTitle">New Record</h2>
         <button class="icon-btn" onclick="toggleModal('entryModal')">✕</button>
       </div>
-      
       <div class="form-group"><span class="label">Type</span><select id="fType" onchange="syncCats()"><option value="Expense">Expense</option><option value="Income">Income</option></select></div>
-      
       <div class="form-grid">
         <div class="form-group"><span class="label">Date</span><input type="date" id="fDate"></div>
-        <div class="form-group"><span class="label">Amount (₹)</span><input type="number" id="fAmount" placeholder="0.00"></div>
+        <div class="form-group"><span class="label">Amount (₹)</span><input type="number" id="fAmount"></div>
       </div>
-
-      <div class="form-group"><span class="label">Merchant / Source</span><input type="text" id="fMerchant" placeholder="Name"></div>
-
+      <div class="form-group"><span class="label">Merchant</span><input type="text" id="fMerchant"></div>
       <div class="form-grid">
         <div class="form-group"><span class="label">Category</span><select id="fCategory"></select></div>
         <div class="form-group"><span class="label">Mode</span><select id="fPayment"></select></div>
       </div>
-
-      <div class="form-group"><span class="label">Notes</span><textarea id="fNote" rows="1"></textarea></div>
-      
-      <div style="display:flex; gap:10px; align-items:center; margin-bottom: 5px;">
-        <div style="flex:1"><span class="label">Receipt</span><input type="file" accept="image/*" onchange="handleImg(event)" style="height:35px; padding:5px; font-size:12px"></div>
-        <div id="fPreview" style="width:35px; height:35px; border-radius:6px; background:var(--surface-2); overflow:hidden;"></div>
-      </div>
-
+      <div class="form-group"><span class="label">Notes</span><textarea id="fNote"></textarea></div>
       <input type="hidden" id="editId"><input type="hidden" id="fImgBase64">
       <button class="primary-btn" onclick="saveEntry()">Save Transaction</button>
-      <button id="delBtn" class="primary-btn hidden" style="background:var(--red); margin-top:5px; padding:8px;" onclick="deleteEntry()">Delete</button>
     </div>
   </div>
 
-  <div id="settingsModal" class="modal-backdrop hidden">
-    <div class="modal">
-      <h2>App Settings</h2>
-      <div class="form-group"><span class="label">Set PIN</span><input type="password" id="setPin" maxlength="4"></div>
-      <div id="qSection">
-        <div class="form-group"><span class="label">Question</span><input type="text" id="setQ"></div>
-        <div class="form-group"><span class="label">Answer</span><input type="text" id="setA"></div>
-      </div>
-      <button class="primary-btn" onclick="saveSettings()">Save Security</button>
-      <button class="primary-btn" onclick="toggleModal('settingsModal')" style="background:none">Close</button>
-    </div>
-  </div>
-
-  <button class="primary-btn" style="position:fixed; bottom:20px; left:5%; width:90%; z-index:900;" onclick="openForm()">+ Add New Entry</button>
+  <button class="primary-btn" style="position:fixed; bottom:25px; left:5%; width:90%; z-index:900;" onclick="openForm()">+ Add New Entry</button>
 
   <script>
     let db, transactions = [], pinInput = "";
-    // RESTORED FULL CATEGORIES
     const expList = ['Grocery', 'Dining Out', 'Rent/EMI', 'Bills/Utilities', 'Fuel/Travel', 'Shopping', 'Health', 'Entertainment', 'Education', 'Investment', 'Insurance', 'Personal Care', 'Maintenance', 'Gift', 'Other'];
-    const incList = ['Salary', 'Freelance', 'Dividends', 'Rental', 'Interest', 'Bonus', 'Other'];
+    const incList = ['Salary', 'Freelance', 'Dividends', 'Loan', 'Interest', 'Bonus', 'Other'];
     const payModes = ['UPI/Digital', 'Cash', 'Credit Card', 'Debit Card', 'Bank Transfer'];
 
     async function initDB() {
       return new Promise(r => {
-        const req = indexedDB.open('LedgerPro_Final_2026', 1);
+        const req = indexedDB.open('LedgerPro_2026_Final', 1);
         req.onupgradeneeded = e => e.target.result.createObjectStore('tx', {keyPath:'id'});
         req.onsuccess = e => r(e.target.result);
       });
+    }
+
+    // BACKUP REMINDER LOGIC
+    function checkBackupStatus() {
+      const lastBackup = localStorage.getItem('last_backup_date');
+      const settingsBadge = document.getElementById('settingsBadge');
+      const backupReminder = document.getElementById('backupReminder');
+      
+      if (!lastBackup) {
+        // If never backed up, show reminder after first week of use
+        localStorage.setItem('last_backup_date', Date.now());
+        return;
+      }
+
+      const diffDays = (Date.now() - parseInt(lastBackup)) / (1000 * 60 * 60 * 24);
+      if (diffDays > 7) {
+        settingsBadge.classList.remove('hidden');
+        backupReminder.classList.remove('hidden');
+      }
+    }
+
+    function exportJSON() {
+      const data = { transactions, settings: { pin: localStorage.getItem('app_pin'), q: localStorage.getItem('app_q'), a: localStorage.getItem('app_a') } };
+      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Ledger_Backup_${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      
+      // Reset reminder
+      localStorage.setItem('last_backup_date', Date.now());
+      document.getElementById('settingsBadge').classList.add('hidden');
+      document.getElementById('backupReminder').classList.add('hidden');
+      alert("Backup Successful!");
+    }
+
+    // CORE UI FUNCTIONS
+    async function refreshUI() {
+      const monthVal = document.getElementById('monthFilter').value;
+      const store = db.transaction('tx','readonly').objectStore('tx');
+      transactions = await new Promise(r => store.getAll().onsuccess = e => r(e.target.result));
+      transactions.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+      let i=0, e=0;
+      const list = document.getElementById('txList');
+      list.innerHTML = "";
+      transactions.forEach(t => {
+        if(!t.date.startsWith(monthVal)) return;
+        const amt = parseFloat(t.amount) || 0;
+        if(t.type === 'Income') i += amt; else e += amt;
+        list.innerHTML += `<div class="tx-item" onclick="editForm('${t.id}')"><div><strong>${t.merchant}</strong><br><small>${t.date}</small></div><div style="color:var(--${t.type==='Income'?'green':'red'}); font-weight:800;">₹${amt}</div></div>`;
+      });
+      document.getElementById('hInc').textContent = `₹${i}`;
+      document.getElementById('hExp').textContent = `₹${e}`;
+      document.getElementById('hSav').textContent = `₹${i-e}`;
     }
 
     function syncCats() {
@@ -191,134 +222,12 @@
       document.getElementById('fPayment').innerHTML = payModes.map(m => `<option>${m}</option>`).join('');
     }
 
-    async function refreshUI() {
-      const q = document.getElementById('txSearch').value.toLowerCase();
-      const monthVal = document.getElementById('monthFilter').value; // e.g. "2026-04"
-      const store = db.transaction('tx','readonly').objectStore('tx');
-      transactions = await new Promise(r => store.getAll().onsuccess = e => r(e.target.result));
-      transactions.sort((a,b) => new Date(b.date) - new Date(a.date));
-
-      let i=0, e=0;
-      const list = document.getElementById('txList');
-      list.innerHTML = "";
-
-      transactions.forEach(t => {
-        if(!t.date.startsWith(monthVal)) return; // Filter by month
-
-        const amt = parseFloat(t.amount) || 0;
-        if(t.type === 'Income') i += amt; else e += amt;
-        
-        if(t.merchant.toLowerCase().includes(q) || t.category.toLowerCase().includes(q)) {
-          list.innerHTML += `<div class="tx-item" onclick="editForm('${t.id}')"><div><strong>${t.merchant}</strong><br><small>${t.date} • ${t.category}</small></div><div style="color:var(--${t.type==='Income'?'green':'red'}); font-weight:800;">₹${amt}</div></div>`;
-        }
-      });
-      document.getElementById('hInc').textContent = `₹${i}`;
-      document.getElementById('hExp').textContent = `₹${e}`;
-      document.getElementById('hSav').textContent = `₹${i-e}`;
-    }
-
-    function renderAnalytics() {
-      const monthVal = document.getElementById('monthFilter').value;
-      let exp = 0, catMap = {};
-      transactions.forEach(t => { 
-        if(t.type==='Expense' && t.date.startsWith(monthVal)){ 
-          const a=parseFloat(t.amount)||0; exp+=a; 
-          catMap[t.category]=(catMap[t.category]||0)+a; 
-        } 
-      });
-
-      // Sort and get Top 5
-      const sorted = Object.entries(catMap).sort((a,b) => b[1] - a[1]).slice(0, 5);
-      let html = `<div class="chart-box"><h3>Month Expense Split</h3>`;
-      sorted.forEach(([k,v]) => {
-        html += `<div class="bar-wrap"><span style="width:80px">${k}</span><div class="bar-bg"><div class="bar-fill" style="width:${(v/exp)*100}%"></div></div><span>₹${v}</span></div>`;
-      });
-      document.getElementById('analyticsContent').innerHTML = html + `</div>`;
-    }
-
-    function openForm() {
-      document.getElementById('editId').value = "";
-      document.getElementById('fDate').valueAsDate = new Date();
-      document.getElementById('fAmount').value = "";
-      document.getElementById('fMerchant').value = "";
-      document.getElementById('fNote').value = "";
-      document.getElementById('fImgBase64').value = "";
-      document.getElementById('fPreview').innerHTML = "";
-      document.getElementById('delBtn').classList.add('hidden');
-      syncCats(); toggleModal('entryModal');
-    }
-
-    function editForm(id) {
-      const t = transactions.find(x => x.id === id);
-      document.getElementById('editId').value = t.id;
-      document.getElementById('fType').value = t.type;
-      syncCats();
-      document.getElementById('fDate').value = t.date;
-      document.getElementById('fAmount').value = t.amount;
-      document.getElementById('fMerchant').value = t.merchant;
-      document.getElementById('fCategory').value = t.category;
-      document.getElementById('fPayment').value = t.payment;
-      document.getElementById('fNote').value = t.note;
-      document.getElementById('fImgBase64').value = t.img || "";
-      document.getElementById('fPreview').innerHTML = t.img ? `<img src="${t.img}" style="width:100%; height:100%; object-fit:cover;">` : "";
-      document.getElementById('delBtn').classList.remove('hidden');
-      toggleModal('entryModal');
-    }
-
-    async function saveEntry() {
-      const entry = { id: document.getElementById('editId').value || Date.now().toString(), type: document.getElementById('fType').value, date: document.getElementById('fDate').value, amount: document.getElementById('fAmount').value, merchant: document.getElementById('fMerchant').value, category: document.getElementById('fCategory').value, payment: document.getElementById('fPayment').value, note: document.getElementById('fNote').value, img: document.getElementById('fImgBase64').value };
-      const tx = db.transaction('tx', 'readwrite');
-      tx.objectStore('tx').put(entry);
-      tx.oncomplete = () => { toggleModal('entryModal'); refreshUI(); };
-    }
-
-    function handleImg(event) {
-      const reader = new FileReader();
-      reader.onload = () => { document.getElementById('fImgBase64').value = reader.result; document.getElementById('fPreview').innerHTML = `<img src="${reader.result}" style="width:100%; height:100%; object-fit:cover">`; };
-      reader.readAsDataURL(event.target.files[0]);
-    }
-
-    function runLock() {
-      const pin = localStorage.getItem('app_pin');
-      if(localStorage.getItem('app_q')) document.getElementById('qSection').classList.add('hidden');
-      if(!pin) return;
-      document.getElementById('lockScreen').classList.remove('hidden');
-      document.getElementById('pinKeys').innerHTML = [1,2,3,4,5,6,7,8,9,'C',0,'OK'].map(k => `<button class="pin-btn" onclick="tapPin('${k}')">${k}</button>`).join('');
-    }
-
-    function tapPin(k) {
-      if(k === 'C') pinInput = "";
-      else if(k === 'OK') { if(pinInput === localStorage.getItem('app_pin')) document.getElementById('lockScreen').classList.add('hidden'); else { alert("Wrong PIN"); pinInput = ""; } }
-      else if(pinInput.length < 4) pinInput += k;
-      document.getElementById('pinDots').textContent = "*".repeat(pinInput.length) || "----";
-    }
-
-    function handleRecovery() {
-      const q = localStorage.getItem('app_q');
-      const a = localStorage.getItem('app_a');
-      const userA = prompt("Recovery Question: " + q);
-      if(userA && userA.toLowerCase() === a.toLowerCase()) {
-        const newPin = prompt("Enter new 4-digit PIN:");
-        if(newPin && newPin.length === 4) { localStorage.setItem('app_pin', newPin); location.reload(); }
-      }
-    }
-
-    function saveSettings() {
-      const p = document.getElementById('setPin').value;
-      const q = document.getElementById('setQ').value;
-      const a = document.getElementById('setA').value;
-      if(p.length === 4) localStorage.setItem('app_pin', p);
-      if(q && a) { localStorage.setItem('app_q', q); localStorage.setItem('app_a', a.toLowerCase()); }
-      alert("Updated"); location.reload();
-    }
-
     function toggleModal(id) { document.getElementById(id).classList.toggle('hidden'); }
     
-    // Set default month to current
+    // Initial Setup
     const now = new Date();
     document.getElementById('monthFilter').value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2, '0')}`;
-
-    initDB().then(d => { db = d; refreshUI(); runLock(); });
+    initDB().then(d => { db = d; refreshUI(); checkBackupStatus(); });
   </script>
 </body>
 </html>
