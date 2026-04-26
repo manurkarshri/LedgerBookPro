@@ -22,7 +22,7 @@
     .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .dev-credit { color: var(--muted); font-size: 0.8rem; display: block; margin-top: -2px; font-weight: 500; }
 
-    /* Dashboard Cards - Color Coded */
+    /* Dashboard Cards */
     .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
     .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
     .card.full { grid-column: 1 / -1; }
@@ -32,43 +32,38 @@
     .val-exp { color: var(--red); font-size: 1.5rem; font-weight: 800; }
     .val-sav { color: var(--blue); font-size: 1.5rem; font-weight: 800; }
 
-    /* List & Search */
-    .search-input { width: 100%; background: var(--surface-2); border: 1px solid var(--line); padding: 14px; border-radius: 14px; color: white; margin: 15px 0; font-size: 16px; outline: none; }
+    /* Section Title & Search */
+    .section-header { font-size: 1.2rem; font-weight: 700; margin: 30px 0 10px; color: var(--text); }
+    .search-input { width: 100%; background: var(--surface-2); border: 1px solid var(--line); padding: 14px; border-radius: 14px; color: white; margin-bottom: 15px; font-size: 16px; outline: none; }
     .tx-item { background: var(--surface); border: 1px solid var(--line); padding: 16px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
 
-    /* UNIFIED VERTICAL LAYOUT - FIXED PROPORTIONS */
+    /* Unified Vertical Modal */
     .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: flex; align-items: flex-end; z-index: 1000; }
     .modal { width: 100%; background: #0d1118; border-radius: 25px 25px 0 0; padding: 24px; max-height: 90vh; overflow-y: auto; border-top: 1px solid var(--line); }
     
     .form-group { margin-bottom: 18px; width: 100%; display: flex; flex-direction: column; }
     
-    /* Ensuring all fields (including date) have identical height and scaling */
+    /* Scaling fix for Date and other fields */
     input, select, textarea { 
       width: 100%; 
       background: var(--surface-2); 
       border: 1px solid var(--line); 
       color: white; 
-      height: 52px; /* Fixed height for all */
+      height: 52px; 
       padding: 0 15px; 
       border-radius: 12px; 
       font-size: 16px; 
       display: block;
       margin-top: 4px;
-      -webkit-appearance: none; /* Removes iOS default styling */
+      -webkit-appearance: none;
     }
     textarea { height: auto; padding: 12px 15px; }
-    
-    /* Specific fix for the date input to match height on iOS/Chrome */
-    input[type="date"] {
-      display: flex;
-      align-items: center;
-      line-height: normal;
-    }
+    input[type="date"] { display: flex; align-items: center; }
 
-    .primary-btn { background: var(--blue); color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; width: 100%; font-size: 1rem; margin-top: 10px; cursor: pointer; }
+    .primary-btn { background: var(--blue); color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; width: 100%; font-size: 1rem; margin-top: 10px; }
     .icon-btn { background: var(--surface); border: 1px solid var(--line); color: var(--text); padding: 10px; border-radius: 12px; }
 
-    /* Chart Restoration */
+    /* Chart Analysis */
     .chart-container { margin: 20px 0; padding: 15px; background: var(--surface); border-radius: 15px; border: 1px solid var(--line); }
     .chart-bar-wrap { display: flex; align-items: center; margin-bottom: 12px; gap: 10px; }
     .chart-bar-bg { flex: 1; height: 12px; background: var(--surface-2); border-radius: 6px; overflow: hidden; }
@@ -95,6 +90,7 @@
       <div class="card full"><span class="label">Net Savings</span><div class="val-sav" id="hSav">₹0</div></div>
     </div>
 
+    <div class="section-header">Transactions</div>
     <input type="text" id="txSearch" class="search-input" placeholder="Search entries..." oninput="refreshUI()">
     <div id="txList"></div>
   </div>
@@ -125,40 +121,12 @@
         </select>
       </div>
 
-      <div class="form-group">
-        <span class="label">Date</span>
-        <input type="date" id="fDate">
-      </div>
-
-      <div class="form-group">
-        <span class="label">Amount (₹)</span>
-        <input type="number" id="fAmount" placeholder="0.00" inputmode="decimal">
-      </div>
-
-      <div class="form-group">
-        <span class="label">Merchant / Source</span>
-        <input type="text" id="fMerchant" placeholder="e.g. Amazon, Salary">
-      </div>
-
-      <div class="form-group">
-        <span class="label">Category</span>
-        <select id="fCategory"></select>
-      </div>
-
-      <div class="form-group">
-        <span class="label">Payment Mode</span>
-        <select id="fPayment"></select>
-      </div>
-
-      <div class="form-group">
-        <span class="label">Notes</span>
-        <textarea id="fNote" rows="2" placeholder="Optional details..."></textarea>
-      </div>
-
-      <div class="form-group">
-        <span class="label">Attachment</span>
-        <input type="file" id="fPhoto" accept="image/*" style="padding-top: 12px;">
-      </div>
+      <div class="form-group"><span class="label">Date</span><input type="date" id="fDate"></div>
+      <div class="form-group"><span class="label">Amount (₹)</span><input type="number" id="fAmount" placeholder="0.00"></div>
+      <div class="form-group"><span class="label">Merchant / Source</span><input type="text" id="fMerchant" placeholder="e.g. Amazon"></div>
+      <div class="form-group"><span class="label">Category</span><select id="fCategory"></select></div>
+      <div class="form-group"><span class="label">Payment Mode</span><select id="fPayment"></select></div>
+      <div class="form-group"><span class="label">Notes</span><textarea id="fNote" rows="2"></textarea></div>
 
       <input type="hidden" id="editId">
       <button class="primary-btn" onclick="saveData()">Save Transaction</button>
@@ -173,8 +141,7 @@
         <span class="label">Monthly Budget (₹)</span>
         <input type="number" id="setBudget" onchange="saveConfig()">
       </div>
-      <button class="primary-btn" onclick="exportData()">Export Backup</button>
-      <button class="primary-btn" onclick="toggleModal('settingsModal')" style="margin-top:10px;">Close</button>
+      <button class="primary-btn" onclick="toggleModal('settingsModal')">Close</button>
     </div>
   </div>
 
@@ -182,13 +149,13 @@
 
   <script>
     let db, transactions = [];
-    const expList = ['Grocery', 'Dining Out', 'Rent/EMI', 'Bills/Utilities', 'Fuel/Travel', 'Shopping', 'Health', 'Entertainment', 'Education', 'Investment', 'Insurance', 'Other'];
+    const expList = ['Grocery', 'Dining Out', 'Rent/EMI', 'Bills/Utilities', 'Fuel/Travel', 'Shopping', 'Health', 'Entertainment', 'Education', 'Investment', 'Other'];
     const incList = ['Salary', 'Freelance', 'Dividends', 'Gift', 'Rental Income', 'Other'];
     const payModes = ['Cash', 'UPI', 'Credit Card', 'Debit Card', 'Net Banking'];
 
     async function initDB() {
       return new Promise(r => {
-        const req = indexedDB.open('LedgerFinal_V1', 1);
+        const req = indexedDB.open('LedgerFinal_V2', 1);
         req.onupgradeneeded = e => e.target.result.createObjectStore('tx', {keyPath:'id'});
         req.onsuccess = e => r(e.target.result);
       });
@@ -214,20 +181,13 @@
 
       transactions.forEach(t => {
         const amt = parseFloat(t.amount) || 0;
-        if(t.type === 'Income') i += amt; 
-        else {
-          e += amt;
-          catTotals[t.category] = (catTotals[t.category] || 0) + amt;
-        }
+        if(t.type === 'Income') i += amt; else { e += amt; catTotals[t.category] = (catTotals[t.category] || 0) + amt; }
 
         if(t.merchant.toLowerCase().includes(query) || t.category.toLowerCase().includes(query)) {
-          list.innerHTML += `
-            <div class="tx-item" onclick="editForm('${t.id}')">
-              <div><strong>${t.merchant || t.category}</strong><br><small>${t.date} • ${t.payment}</small></div>
-              <div style="color:var(--${t.type==='Income'?'green':'red'}); font-weight:800;">
-                ${t.type==='Income'?'+':'-'}₹${amt}
-              </div>
-            </div>`;
+          list.innerHTML += `<div class="tx-item" onclick="editForm('${t.id}')">
+            <div><strong>${t.merchant}</strong><br><small>${t.date} • ${t.category}</small></div>
+            <div style="color:var(--${t.type==='Income'?'green':'red'}); font-weight:800;">${t.type==='Income'?'+':'-'}₹${amt}</div>
+          </div>`;
         }
       });
 
@@ -235,17 +195,15 @@
       document.getElementById('hExp').textContent = `₹${e}`;
       document.getElementById('hSav').textContent = `₹${i-e}`;
 
-      // Chart Update
       const chart = document.getElementById('chartView');
       chart.innerHTML = `<h3>Spending Breakdown</h3>`;
       Object.entries(catTotals).forEach(([cat, val]) => {
         const pct = e > 0 ? (val / e) * 100 : 0;
-        chart.innerHTML += `
-          <div class="chart-bar-wrap">
-            <div style="width:90px; font-size:0.75rem">${cat}</div>
-            <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:${pct}%"></div></div>
-            <div style="width:70px; font-size:0.75rem; text-align:right">₹${val}</div>
-          </div>`;
+        chart.innerHTML += `<div class="chart-bar-wrap">
+          <div style="width:90px; font-size:0.75rem">${cat}</div>
+          <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:${pct}%"></div></div>
+          <div style="width:70px; font-size:0.75rem; text-align:right">₹${val}</div>
+        </div>`;
       });
     }
 
@@ -266,22 +224,14 @@
     }
 
     async function deleteData() {
-      const id = document.getElementById('editId').value;
       if(confirm("Delete this entry?")) {
         const tx = db.transaction('tx', 'readwrite');
-        tx.objectStore('tx').delete(id);
+        tx.objectStore('tx').delete(document.getElementById('editId').value);
         tx.oncomplete = () => { toggleModal('entryModal'); refreshUI(); };
       }
     }
 
-    function openForm() {
-      document.getElementById('editId').value = "";
-      document.getElementById('fDate').valueAsDate = new Date();
-      document.getElementById('delBtn').classList.add('hidden');
-      syncOptions();
-      toggleModal('entryModal');
-    }
-
+    function openForm() { document.getElementById('editId').value = ""; document.getElementById('fDate').valueAsDate = new Date(); document.getElementById('delBtn').classList.add('hidden'); syncOptions(); toggleModal('entryModal'); }
     function editForm(id) {
       const t = transactions.find(x => x.id === id);
       document.getElementById('editId').value = t.id;
@@ -296,9 +246,7 @@
       document.getElementById('delBtn').classList.remove('hidden');
       toggleModal('entryModal');
     }
-
     function toggleModal(id) { document.getElementById(id).classList.toggle('hidden'); }
-
     initDB().then(d => { db = d; refreshUI(); });
   </script>
 </body>
