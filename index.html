@@ -6,470 +6,339 @@
   <meta name="theme-color" content="#070b14" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="LedgerBook" />
   <title>LedgerBook Pro</title>
   <link rel="manifest" href="manifest.json" />
   <style>
     :root {
-      --bg: #070b14;
-      --surface: rgba(21, 25, 35, 0.85);
-      --surface-2: #1d2230;
-      --line: rgba(255, 255, 255, 0.08);
-      --text: #eef2ff;
-      --muted: #a6adbb;
-      --green: #22c55e;
-      --red: #ff5b5b;
-      --blue: #2ea3ff;
-      --violet: #8b5cf6;
-      --orange: #f59e0b;
-      --shadow: 0 12px 40px rgba(0,0,0,.4);
-      --radius: 22px;
-      --glass: blur(12px);
+      --bg: #070b14; --surface: #151923; --surface-2: #1d2230;
+      --line: #2a3142; --text: #eef2ff; --muted: #a6adbb;
+      --green: #22c55e; --red: #ff5b5b; --blue: #2ea3ff;
+      --radius: 20px;
     }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html, body { height: 100%; margin: 0; background: var(--bg); color: var(--text); overflow-x: hidden; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
-      background-image: radial-gradient(circle at top right, rgba(46, 163, 255, 0.05), transparent 400px);
-    }
-    .app { max-width: 800px; margin: 0 auto; padding: 20px 16px 120px; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, sans-serif; padding: 20px 16px 120px; }
     .hidden { display: none !important; }
-
-    /* Topbar & Branding */
-    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .title { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.04em; margin: 0; }
-    .subtitle { color: var(--muted); font-size: 0.9rem; margin-top: 4px; font-weight: 500; }
-    .top-actions { display: flex; gap: 10px; }
-
-    /* Premium Buttons */
-    .icon-btn, .primary-btn, .secondary-btn, .seg-btn {
-      border: 1px solid var(--line);
-      background: var(--surface);
-      color: var(--text);
-      border-radius: 16px;
-      padding: 12px;
-      cursor: pointer;
-      font-weight: 600;
-      backdrop-filter: var(--glass);
-      transition: transform 0.1s;
-    }
-    .icon-btn:active, .primary-btn:active { transform: scale(0.95); }
-    .primary-btn { background: var(--blue); color: white; border: none; padding: 12px 24px; }
-    .secondary-btn { background: var(--surface-2); }
-
-    /* Search Bar */
-    .search-wrap { position: relative; margin-bottom: 20px; }
-    .search-input {
-      width: 100%; background: var(--surface); border: 1px solid var(--line);
-      padding: 14px 16px 14px 44px; border-radius: 18px; color: white; font-size: 16px;
-      backdrop-filter: var(--glass);
-    }
-    .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); opacity: 0.5; }
-
-    /* Navigation */
-    .month-switch {
-      display: flex; align-items: center; justify-content: space-between;
-      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
-      padding: 12px 20px; margin-bottom: 20px; backdrop-filter: var(--glass);
-    }
-    .month-label { font-size: 1.1rem; font-weight: 700; }
-    .month-nav { color: var(--blue); background: transparent; border: none; font-size: 1.8rem; cursor: pointer; }
-
-    /* Dashboard Cards */
-    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-    .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); backdrop-filter: var(--glass); }
+    
+    /* Header & Cards */
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; border: 1px solid var(--line); }
     .card.full { grid-column: 1 / -1; }
-    .label { color: var(--muted); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
-    .value { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.02em; }
+    .label { color: var(--muted); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; }
+    .value { font-size: 1.6rem; font-weight: 800; }
+
+    /* Search Bar - Relocated */
+    .search-wrap { margin: 15px 0; }
+    .search-input { width: 100%; background: var(--surface-2); border: 1px solid var(--line); padding: 14px; border-radius: 14px; color: white; font-size: 16px; outline: none; }
 
     /* Transaction List */
-    .tx {
-      background: var(--surface); border: 1px solid var(--line); padding: 16px;
-      border-radius: 18px; margin-bottom: 10px; display: grid; grid-template-columns: 1fr auto; gap: 10px;
-      cursor: pointer; transition: 0.2s;
-    }
-    .tx:active { background: var(--surface-2); }
-    .tx-title { font-size: 1.1rem; font-weight: 700; }
-    .tx-meta { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
-    .tag-recurring { font-size: 10px; background: rgba(139, 92, 246, 0.15); color: var(--violet); padding: 2px 6px; border-radius: 6px; margin-left: 6px; font-weight: 700; }
+    .tx-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--surface); border-radius: 16px; margin-bottom: 10px; border-left: 4px solid transparent; }
+    .tx-item.expense { border-left-color: var(--red); }
+    .tx-item.income { border-left-color: var(--green); }
 
     /* Modal Styling */
-    .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
-      display: flex; align-items: flex-end; justify-content: center; z-index: 1000;
-    }
-    .modal {
-      width: min(700px, 100%); max-height: 90vh; overflow-y: auto;
-      background: #0d1118; border-top: 1px solid var(--line); border-radius: 30px 30px 0 0; padding: 24px;
-    }
-    .tabs { display: flex; gap: 8px; margin-bottom: 20px; background: #161b22; padding: 5px; border-radius: 16px; }
-    .seg-btn { flex: 1; border: none; padding: 12px; border-radius: 12px; font-weight: 700; }
-    .seg-btn.active { background: var(--surface-2); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: flex; align-items: flex-end; z-index: 1000; }
+    .modal { width: 100%; background: #0d1118; border-radius: 30px 30px 0 0; padding: 24px; max-height: 90vh; overflow-y: auto; border-top: 1px solid var(--line); }
+    
+    /* Form Grid Fix (No overlap) */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px; }
+    .full { grid-column: 1 / -1; }
+    input, select, textarea { width: 100%; background: var(--surface-2); border: 1px solid var(--line); color: white; padding: 14px; border-radius: 12px; font-size: 16px; }
+    
+    .primary-btn { background: var(--blue); color: white; border: none; padding: 16px; border-radius: 16px; font-weight: 700; width: 100%; }
+    .icon-btn { background: var(--surface); border: 1px solid var(--line); color: var(--text); padding: 10px; border-radius: 12px; }
 
-    input, select, textarea { width: 100%; border: 1px solid var(--line); background: #161b22; color: white; border-radius: 14px; padding: 14px; font-size: 16px; margin-bottom: 12px; }
-
-    /* Floating Action Bar */
-    .fab-container {
-      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-      width: 90%; max-width: 450px; display: flex; gap: 12px; z-index: 99;
-    }
-    .fab-main { flex: 1; height: 64px; border-radius: 32px; background: linear-gradient(135deg, var(--blue), #2563eb); color: white; border: none; font-size: 1.1rem; font-weight: 800; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); cursor: pointer; }
-    .fab-voice { width: 64px; height: 64px; border-radius: 32px; background: var(--surface); border: 1px solid var(--line); color: var(--blue); font-size: 1.5rem; backdrop-filter: var(--glass); cursor: pointer; }
-
-    /* Charts */
-    .bar-chart { display: flex; align-items: flex-end; gap: 20px; height: 240px; padding: 20px; background: var(--surface-2); border-radius: 18px; }
-    .bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
-    .bar { width: 100%; border-radius: 8px 8px 0 0; min-height: 5px; }
-
-    .green { color: var(--green); } .red { color: var(--red); } .blue { color: var(--blue); }
+    /* PIN Lock UI */
+    .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+    .pin-btn { background: var(--surface-2); border: 1px solid var(--line); color: white; padding: 20px; border-radius: 16px; font-size: 1.4rem; font-weight: bold; }
+    
+    /* Insight & Attachment UI */
+    .insight-box { background: rgba(46, 163, 255, 0.1); border: 1px solid var(--blue); padding: 15px; border-radius: 15px; margin: 20px 0; }
+    .preview-img { width: 100%; border-radius: 10px; margin-top: 10px; border: 1px solid var(--line); }
   </style>
 </head>
 <body>
 
-  <div class="app">
-    <section id="homeView">
-      <div class="topbar">
-        <div>
-          <h1 class="title">LedgerBook</h1>
-          <div class="subtitle">Shriganesh Manurkar • Pro Edition</div>
-        </div>
-        <div class="top-actions">
-          <button class="icon-btn" id="reportsBtn">📊</button>
-          <button class="icon-btn" id="exportBtn">⤴️</button>
-        </div>
-      </div>
-
-      <div class="search-wrap">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" class="search-input" placeholder="Search categories, notes, or merchants...">
-      </div>
-
-      <div class="month-switch">
-        <button class="month-nav" id="prevMonthBtn">‹</button>
-        <div class="month-label" id="homeMonthLabel">April 2026</div>
-        <button class="month-nav" id="nextMonthBtn">›</button>
-      </div>
-
-      <div class="cards">
-        <div class="card">
-          <div class="label">Income</div>
-          <div class="value green" id="incomeValue">₹0</div>
-        </div>
-        <div class="card">
-          <div class="label">Expense</div>
-          <div class="value red" id="expenseValue">₹0</div>
-        </div>
-        <div class="card full">
-          <div class="label">Net Savings</div>
-          <div class="value blue" id="savingsValue">₹0</div>
-        </div>
-      </div>
-
-      <h2 style="font-size: 1.2rem; margin: 24px 0 12px; color: var(--muted);">TRANSACTIONS</h2>
-      <div id="txEmpty" class="hidden" style="text-align:center; padding:40px; color:var(--muted); border: 1px dashed var(--line); border-radius: 20px;">No entries this month.</div>
-      <div id="transactionList"></div>
-    </section>
-
-    <section id="reportsView" class="hidden">
-      <button class="secondary-btn" id="backHomeBtn" style="margin-bottom:20px;">← Back Home</button>
-      <div class="month-switch">
-        <button class="month-nav" id="reportPrevMonthBtn">‹</button>
-        <div class="month-label" id="reportMonthLabel"></div>
-        <button class="month-nav" id="reportNextMonthBtn">›</button>
-      </div>
-      <div class="card chart-card">
-        <div class="label">Income vs Expense</div>
-        <div id="incomeExpenseChart" class="bar-chart"></div>
-      </div>
-      <div class="card" style="margin-top:15px;">
-        <div class="label">Expense Categories</div>
-        <div id="expenseCategoryChart" style="display:flex; flex-direction:column; gap:10px; margin-top:15px;"></div>
-      </div>
-    </section>
+  <div id="lockScreen" class="modal-backdrop hidden" style="height: 100%; align-items: center; justify-content: center;">
+    <div class="modal" style="text-align: center; border-radius: 28px; max-width: 400px; margin-bottom: 0; border: 1px solid var(--line);">
+      <h2>Enter PIN</h2>
+      <div id="pinDots" style="font-size: 2.5rem; margin: 20px 0; letter-spacing: 8px;">----</div>
+      <div class="pin-pad" id="pinPadUI"></div>
+      <button onclick="handleForgotPin()" style="background:none; border:none; color:var(--muted); margin-top:20px;">Forgot PIN?</button>
+    </div>
   </div>
 
-  <div class="fab-container">
-    <button id="voiceBtn" class="fab-voice" title="Voice Entry">🎤</button>
-    <button id="addBtn" class="fab-main">+ Add Entry</button>
+  <div id="mainView">
+    <div class="topbar">
+      <div><h1 style="margin:0; font-size: 1.8rem;">LedgerBook</h1><small style="color:var(--muted)">Pro Private Edition</small></div>
+      <div style="display:flex; gap:10px;">
+        <button class="icon-btn" onclick="openReports()">📊</button>
+        <button class="icon-btn" onclick="toggleModal('settingsModal')">⚙️</button>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card"><div class="label">Income</div><div class="value green" id="incVal">₹0</div></div>
+      <div class="card"><div class="label">Expense</div><div class="value red" id="expVal">₹0</div></div>
+      <div class="card full" id="savingsCard"><div class="label">Net Savings</div><div class="value blue" id="savVal">₹0</div></div>
+    </div>
+
+    <h3 style="margin-bottom:0;">Transactions</h3>
+    <div class="search-wrap">
+      <input type="text" id="txSearch" class="search-input" placeholder="Search categories or notes..." oninput="filterTransactions()">
+    </div>
+    <div id="txList"></div>
   </div>
 
-  <div id="transactionModal" class="modal-backdrop hidden">
+  <div id="entryModal" class="modal-backdrop hidden">
     <div class="modal">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2 id="modalTitle" style="margin:0;">New Entry</h2>
-        <button id="cancelModalBtn" style="background:none; border:none; color:var(--muted); font-size:24px;">✕</button>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 id="modalTitle">New Entry</h2>
+        <button class="icon-btn" onclick="toggleModal('entryModal')">✕</button>
       </div>
-      
-      <div class="tabs">
-        <button class="seg-btn active" id="typeExpenseBtn">Expense</button>
-        <button class="seg-btn" id="typeIncomeBtn">Income</button>
-      </div>
+      <div class="form-grid">
+        <div class="full">
+          <select id="fType" onchange="syncOptions()">
+            <option value="Expense">Expense</option>
+            <option value="Income">Income</option>
+          </select>
+        </div>
+        <div><span class="label">Date</span><input type="date" id="fDate"></div>
+        <div><span class="label">Amount</span><input type="number" id="fAmount" placeholder="0.00"></div>
+        <div class="full"><span class="label">Merchant</span><input type="text" id="fMerchant" placeholder="e.g. Amazon" onblur="runPredict()"></div>
+        <div class="full"><span class="label">Category</span><select id="fCategory"></select></div>
+        <div class="full"><span class="label">Payment Mode</span><select id="fPayment"></select></div>
+        <div class="full"><span class="label">Note</span><textarea id="fNote" rows="2"></textarea></div>
+        
+        <div class="full">
+          <span class="label">Receipt Photo</span>
+          <input type="file" id="fPhoto" accept="image/*" style="padding: 10px;">
+          <div id="photoPreview"></div>
+        </div>
 
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-        <div><label class="label">Date</label><input type="date" id="txDate"></div>
-        <div><label class="label">Amount</label><input type="number" id="txAmount" placeholder="₹"></div>
-      </div>
-
-      <label class="label">Category</label>
-      <select id="txCategory"></select>
-
-      <label class="label">Payment Mode</label>
-      <select id="txPaymentMode"></select>
-
-      <label class="label">Merchant / Source</label>
-      <input type="text" id="txMerchant" placeholder="e.g. Amazon, Salary">
-
-      <div style="display:flex; align-items:center; gap:12px; background:#161b22; padding:12px; border-radius:14px; margin-bottom:12px;">
-        <span style="flex:1; font-size:14px;">Recurring Subscription?</span>
-        <input type="checkbox" id="txRecurring" style="width:20px; margin:0;">
-      </div>
-
-      <textarea id="txNote" placeholder="Notes (Optional)"></textarea>
-
-      <div style="display:flex; gap:12px; margin-top:10px;">
-        <button class="secondary-btn" style="flex:1" id="photoBtn">📷 Photo</button>
-        <input type="file" id="photoInput" class="hidden" accept="image/*">
-        <button class="primary-btn" style="flex:2" id="saveTransactionBtn">Save Transaction</button>
-      </div>
-    </section>
-  </div>
-
-  <div id="detailModal" class="modal-backdrop hidden">
-    <div class="modal" style="border-radius:30px;">
-      <div id="detailContent"></div>
-      <div id="attachmentBlock" style="margin-top:20px;"></div>
-      <div style="display:flex; gap:12px; margin-top:24px;">
-        <button class="secondary-btn" id="closeDetailBtn" style="flex:1">Close</button>
-        <button class="secondary-btn red" id="deleteTxBtn" style="flex:1; border-color:var(--red);">Delete</button>
-        <button class="primary-btn" id="editDetailBtn" style="flex:1">Edit</button>
+        <div class="full"><button class="primary-btn" onclick="saveData()">Save Transaction</button></div>
       </div>
     </div>
   </div>
 
+  <div id="settingsModal" class="modal-backdrop hidden">
+    <div class="modal">
+      <h2>App Management</h2>
+      <div style="display:grid; gap:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span>Monthly Budget (₹)</span>
+          <input type="number" id="cfgBudget" style="width:120px;" onchange="saveConfig()">
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span>Enable PIN Lock</span>
+          <input type="checkbox" id="cfgPin" onchange="manageSecurity()" style="width:22px; height:22px;">
+        </div>
+        <button class="primary-btn" style="background:var(--surface-2); border:1px solid var(--line);" onclick="exportData()">📤 Export Data (JSON)</button>
+        <button class="primary-btn" onclick="toggleModal('settingsModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="reportsView" class="modal-backdrop hidden">
+    <div class="modal" style="height: 100%; border-radius:0;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2>Smart Insights</h2>
+        <button class="icon-btn" onclick="toggleModal('reportsView')">✕</button>
+      </div>
+      <div id="insightText" class="insight-box">Generating analysis...</div>
+      <div id="catSummary"></div>
+    </div>
+  </div>
+
+  <button class="primary-btn" style="position:fixed; bottom:25px; left:5%; width:90%;" onclick="openEntry()">+ Add Entry</button>
+
   <script>
-    // --- DATABASE & STATE ---
-    const DB_NAME = 'ledgerbook_db';
-    const TX_STORE = 'transactions';
-    const FILE_STORE = 'attachments';
-    let db, transactions = [], editingId = null, selectedAttachment = null, currentDetailId = null;
-    let selectedMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-    let searchTerm = "";
+    let db, transactions = [], pinBuffer = "";
+    const DB_NAME = 'LedgerDB';
+    const STORE = 'transactions';
 
-    const incomeCategories = ['Salary', 'Side Income', 'Interest', 'Refund', 'Gift', 'Other Income'];
-    const expenseCategories = ['Grocery', 'Dining', 'Bills', 'Rent', 'Fuel', 'Medical', 'Shopping', 'Entertainment', 'Investment', 'Other'];
-    const paymentModes = ['Cash', 'UPI', 'Credit Card', 'Debit Card', 'Bank Transfer'];
-
-    // --- INITIALIZATION ---
-    async function init() {
-      db = await openDB();
-      bindEvents();
-      populateSelects('Expense');
-      await loadTransactions();
-      renderAll();
-      if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
-    }
-
-    function openDB() {
-      return new Promise((resolve, reject) => {
-        const req = indexedDB.open(DB_NAME, 1);
-        req.onupgradeneeded = e => {
-          const d = e.target.result;
-          if (!d.objectStoreNames.contains(TX_STORE)) d.createObjectStore(TX_STORE, { keyPath: 'id' });
-          if (!d.objectStoreNames.contains(FILE_STORE)) d.createObjectStore(FILE_STORE, { keyPath: 'id' });
+    // --- 1. DB & AUTO-UPDATE ---
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').then(reg => {
+        reg.onupdatefound = () => {
+          const install = reg.installing;
+          install.onstatechange = () => { if (install.state === 'installed' && navigator.serviceWorker.controller) window.location.reload(); };
         };
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
       });
     }
 
-    async function loadTransactions() {
-      const store = db.transaction(TX_STORE).objectStore(TX_STORE);
-      const items = await new Promise(r => {
-        const req = store.getAll();
-        req.onsuccess = () => r(req.result);
+    const openDB = () => {
+      return new Promise((resolve) => {
+        const req = indexedDB.open(DB_NAME, 2);
+        req.onupgradeneeded = e => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE, { keyPath: 'id' });
+        };
+        req.onsuccess = e => resolve(e.target.result);
       });
-      transactions = items.sort((a, b) => new Date(b.dateISO) - new Date(a.dateISO));
-    }
-
-    // --- RENDERING ---
-    function renderAll() {
-      renderHome();
-      renderReports();
-    }
-
-    function renderHome() {
-      const monthItems = transactions.filter(t => {
-        const d = new Date(t.dateISO);
-        return d.getMonth() === selectedMonth.getMonth() && d.getFullYear() === selectedMonth.getFullYear();
-      });
-
-      const filtered = monthItems.filter(t => 
-        t.category.toLowerCase().includes(searchTerm) || 
-        (t.merchant || '').toLowerCase().includes(searchTerm) ||
-        (t.note || '').toLowerCase().includes(searchTerm)
-      );
-
-      document.getElementById('homeMonthLabel').textContent = new Intl.DateTimeFormat('en-IN', { month: 'long', year: 'numeric' }).format(selectedMonth);
-      
-      const inc = monthItems.filter(t => t.type === 'Income').reduce((s, t) => s + t.amount, 0);
-      const exp = monthItems.filter(t => t.type === 'Expense').reduce((s, t) => s + t.amount, 0);
-      
-      document.getElementById('incomeValue').textContent = `₹${inc.toLocaleString()}`;
-      document.getElementById('expenseValue').textContent = `₹${exp.toLocaleString()}`;
-      document.getElementById('savingsValue').textContent = `₹${(inc - exp).toLocaleString()}`;
-
-      const list = document.getElementById('transactionList');
-      list.innerHTML = '';
-      document.getElementById('txEmpty').classList.toggle('hidden', filtered.length > 0);
-
-      filtered.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'tx';
-        div.onclick = () => openDetail(item.id);
-        div.innerHTML = `
-          <div>
-            <div class="tx-title">${item.category} ${item.recurring ? '<span class="tag-recurring">🔁 SUB</span>' : ''}</div>
-            <div class="tx-meta">${item.paymentMode} • ${item.merchant || 'General'}</div>
-          </div>
-          <div class="tx-title ${item.type === 'Income' ? 'green' : 'red'}">${item.type === 'Income' ? '+' : '-'} ₹${item.amount}</div>
-        `;
-        list.appendChild(div);
-      });
-    }
-
-    function renderReports() {
-        const items = transactions.filter(t => {
-            const d = new Date(t.dateISO);
-            return d.getMonth() === selectedMonth.getMonth() && d.getFullYear() === selectedMonth.getFullYear();
-        });
-        document.getElementById('reportMonthLabel').textContent = document.getElementById('homeMonthLabel').textContent;
-
-        const inc = items.filter(t => t.type === 'Income').reduce((s, t) => s + t.amount, 0);
-        const exp = items.filter(t => t.type === 'Expense').reduce((s, t) => s + t.amount, 0);
-        const max = Math.max(inc, exp, 1);
-
-        document.getElementById('incomeExpenseChart').innerHTML = `
-            <div class="bar-wrap"><div class="bar" style="height:${(inc/max)*100}%; background:var(--green)"></div><span class="label">INC</span></div>
-            <div class="bar-wrap"><div class="bar" style="height:${(exp/max)*100}%; background:var(--red)"></div><span class="label">EXP</span></div>
-        `;
-    }
-
-    // --- ACTIONS ---
-    async function saveFromForm() {
-      const type = document.getElementById('typeIncomeBtn').classList.contains('active') ? 'Income' : 'Expense';
-      const amount = Number(document.getElementById('txAmount').value);
-      if (!amount) return alert("Enter amount");
-
-      const record = {
-        id: editingId || crypto.randomUUID(),
-        dateISO: document.getElementById('txDate').value,
-        type, amount,
-        category: document.getElementById('txCategory').value,
-        paymentMode: document.getElementById('txPaymentMode').value,
-        merchant: document.getElementById('txMerchant').value,
-        note: document.getElementById('txNote').value,
-        recurring: document.getElementById('txRecurring').checked,
-        createdAt: Date.now()
-      };
-
-      if (selectedAttachment) {
-          const fileId = crypto.randomUUID();
-          await db.transaction(FILE_STORE, 'readwrite').objectStore(FILE_STORE).put({ id: fileId, blob: selectedAttachment });
-          record.attachmentId = fileId;
-      }
-
-      await db.transaction(TX_STORE, 'readwrite').objectStore(TX_STORE).put(record);
-      await loadTransactions();
-      document.getElementById('transactionModal').classList.add('hidden');
-      renderAll();
-    }
-
-    async function openDetail(id) {
-        currentDetailId = id;
-        const t = transactions.find(x => x.id === id);
-        document.getElementById('detailContent').innerHTML = `
-            <h2 class="${t.type === 'Income' ? 'green' : 'red'}">₹${t.amount}</h2>
-            <div class="label">CATEGORY: ${t.category}</div>
-            <div class="label">MODE: ${t.paymentMode}</div>
-            <div class="label">MERCHANT: ${t.merchant || '-'}</div>
-            <div class="label">DATE: ${t.dateISO}</div>
-            <p style="color:var(--muted)">${t.note || ''}</p>
-        `;
-        document.getElementById('detailModal').classList.remove('hidden');
-    }
-
-    // --- SEARCH & VOICE ---
-    document.getElementById('searchInput').oninput = e => {
-        searchTerm = e.target.value.toLowerCase();
-        renderHome();
     };
 
-    const recognition = window.SpeechRecognition || window.webkitSpeechRecognition ? new (window.SpeechRecognition || window.webkitSpeechRecognition)() : null;
-    if(recognition) {
-        document.getElementById('voiceBtn').onclick = () => recognition.start();
-        recognition.onresult = e => {
-            const text = e.results[0][0].transcript.toLowerCase();
-            const amt = text.match(/\d+/);
-            if(amt) {
-                openAddModal();
-                document.getElementById('txAmount').value = amt[0];
-                if(text.includes('salary') || text.includes('income')) setType('Income');
-            }
+    // --- 2. CORE LOGIC ---
+    const incomeCats = ['Salary', 'Dividends', 'Loan/Borrow', 'Interest', 'Gift', 'Other'];
+    const expenseCats = ['Grocery', 'Rent', 'Fuel', 'Medical', 'Shopping', 'Dining', 'Bills', 'Other'];
+    const incomeModes = ['Direct Deposit', 'UPI', 'Cash', 'Cheque', 'Bank Transfer'];
+    const expenseModes = ['Cash', 'UPI', 'Credit Card', 'Debit Card', 'Net Banking'];
+
+    function syncOptions() {
+      const type = document.getElementById('fType').value;
+      const cats = type === 'Income' ? incomeCats : expenseCats;
+      const modes = type === 'Income' ? incomeModes : expenseModes;
+      document.getElementById('fCategory').innerHTML = cats.map(c => `<option>${c}</option>`).join('');
+      document.getElementById('fPayment').innerHTML = modes.map(m => `<option>${m}</option>`).join('');
+    }
+
+    async function renderAll() {
+      const tx = db.transaction(STORE, 'readonly');
+      const store = tx.objectStore(STORE);
+      transactions = await new Promise(r => store.getAll().onsuccess = e => r(e.target.result));
+      transactions.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+      let inc = 0, exp = 0;
+      const list = document.getElementById('txList');
+      list.innerHTML = "";
+
+      transactions.forEach(t => {
+        if(t.type === 'Income') inc += parseFloat(t.amount); else exp += parseFloat(t.amount);
+        list.innerHTML += `
+          <div class="tx-item ${t.type.toLowerCase()}" onclick="viewTx('${t.id}')">
+            <div>
+              <div style="font-weight:bold;">${t.merchant || t.category}</div>
+              <small style="color:var(--muted)">${t.date}</small>
+            </div>
+            <div style="font-weight:bold;">${t.type === 'Income' ? '+' : '-'}₹${t.amount}</div>
+          </div>`;
+      });
+
+      document.getElementById('incVal').textContent = `₹${inc}`;
+      document.getElementById('expVal').textContent = `₹${exp}`;
+      document.getElementById('savVal').textContent = `₹${inc - exp}`;
+      
+      checkBudget(exp);
+    }
+
+    // --- 3. SMART FEATURES ---
+    function runPredict() {
+      const m = document.getElementById('fMerchant').value.trim().toLowerCase();
+      const match = transactions.find(t => t.merchant && t.merchant.toLowerCase() === m);
+      if(match) {
+        document.getElementById('fCategory').value = match.category;
+        document.getElementById('fCategory').style.border = "1px solid var(--green)";
+      }
+    }
+
+    function checkBudget(totalExp) {
+      const b = parseFloat(localStorage.getItem('user_budget')) || 0;
+      const card = document.getElementById('savingsCard');
+      if(b > 0 && totalExp >= b) {
+        card.style.borderColor = "var(--red)";
+        card.querySelector('.label').textContent = "OVER BUDGET WARNING ⚠️";
+      } else {
+        card.style.borderColor = "var(--line)";
+        card.querySelector('.label').textContent = "Net Savings";
+      }
+    }
+
+    function openReports() {
+      toggleModal('reportsView');
+      const now = new Date();
+      const thisMonth = transactions.filter(t => new Date(t.date).getMonth() === now.getMonth());
+      const lastMonth = transactions.filter(t => new Date(t.date).getMonth() === now.getMonth() - 1);
+      const curE = thisMonth.filter(t => t.type === 'Expense').reduce((a,b) => a + parseFloat(b.amount), 0);
+      const preE = lastMonth.filter(t => t.type === 'Expense').reduce((a,b) => a + parseFloat(b.amount), 0);
+
+      let msg = "Start logging for 2 months to see comparisons.";
+      if(preE > 0) {
+        const diff = ((curE - preE) / preE) * 100;
+        msg = diff > 0 ? `Spending is up ${diff.toFixed(0)}% from last month.` : `Spending is down ${Math.abs(diff).toFixed(0)}% from last month.`;
+      }
+      document.getElementById('insightText').textContent = msg;
+    }
+
+    // --- 4. SECURITY (PIN & RECOVERY) ---
+    function manageSecurity() {
+      if(document.getElementById('cfgPin').checked) {
+        const p = prompt("Set 4-Digit PIN:");
+        const q = prompt("Security Q: What is your birth city?");
+        if(p && q) {
+          localStorage.setItem('app_pin', p);
+          localStorage.setItem('sq_ans', q.toLowerCase().trim());
+        }
+      } else { localStorage.removeItem('app_pin'); }
+    }
+
+    function handleForgotPin() {
+      const a = prompt("Security Q: What is your birth city?");
+      if(a && a.toLowerCase().trim() === localStorage.getItem('sq_ans')) {
+        alert("Your PIN is: " + localStorage.getItem('app_pin'));
+      } else { alert("Wrong answer."); }
+    }
+
+    function initPinScreen() {
+      const pin = localStorage.getItem('app_pin');
+      if(!pin) return;
+      document.getElementById('lockScreen').classList.remove('hidden');
+      const pad = document.getElementById('pinPadUI');
+      pad.innerHTML = "";
+      [1,2,3,4,5,6,7,8,9,'C',0,'OK'].forEach(v => {
+        const b = document.createElement('button'); b.className = "pin-btn"; b.textContent = v;
+        b.onclick = () => {
+          if(v === 'C') pinBuffer = "";
+          else if(v === 'OK') {
+            if(pinBuffer === localStorage.getItem('app_pin')) document.getElementById('lockScreen').classList.add('hidden');
+            else { alert("Wrong PIN"); pinBuffer = ""; }
+          } else pinBuffer += v;
+          document.getElementById('pinDots').textContent = "*".repeat(pinBuffer.length) || "----";
         };
+        pad.appendChild(b);
+      });
     }
 
-    // --- HELPERS ---
-    function populateSelects(type) {
-      const cats = type === 'Income' ? incomeCategories : expenseCategories;
-      document.getElementById('txCategory').innerHTML = cats.map(c => `<option>${c}</option>`).join('');
-      document.getElementById('txPaymentMode').innerHTML = paymentModes.map(p => `<option>${p}</option>`).join('');
+    // --- 5. DATA ACTIONS ---
+    async function saveData() {
+      const photoFile = document.getElementById('fPhoto').files[0];
+      let photoBase64 = "";
+      if(photoFile) {
+        photoBase64 = await new Promise(r => {
+          const reader = new FileReader();
+          reader.onload = e => r(e.target.result);
+          reader.readAsDataURL(photoFile);
+        });
+      }
+
+      const entry = {
+        id: Date.now().toString(),
+        type: document.getElementById('fType').value,
+        date: document.getElementById('fDate').value,
+        amount: document.getElementById('fAmount').value,
+        merchant: document.getElementById('fMerchant').value,
+        category: document.getElementById('fCategory').value,
+        payment: document.getElementById('fPayment').value,
+        note: document.getElementById('fNote').value,
+        photo: photoBase64
+      };
+
+      const tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).add(entry);
+      tx.oncomplete = () => { toggleModal('entryModal'); renderAll(); };
     }
 
-    function setType(type) {
-        document.getElementById('typeExpenseBtn').classList.toggle('active', type === 'Expense');
-        document.getElementById('typeIncomeBtn').classList.toggle('active', type === 'Income');
-        populateSelects(type);
-    }
-
-    function openAddModal() {
-        editingId = null; selectedAttachment = null;
-        document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
-        document.getElementById('txAmount').value = '';
-        document.getElementById('transactionModal').classList.remove('hidden');
-    }
-
-    function bindEvents() {
-        document.getElementById('addBtn').onclick = openAddModal;
-        document.getElementById('cancelModalBtn').onclick = () => document.getElementById('transactionModal').classList.add('hidden');
-        document.getElementById('typeExpenseBtn').onclick = () => setType('Expense');
-        document.getElementById('typeIncomeBtn').onclick = () => setType('Income');
-        document.getElementById('saveTransactionBtn').onclick = saveFromForm;
-        document.getElementById('reportsBtn').onclick = () => { document.getElementById('homeView').classList.add('hidden'); document.getElementById('reportsView').classList.remove('hidden'); };
-        document.getElementById('backHomeBtn').onclick = () => { document.getElementById('reportsView').classList.add('hidden'); document.getElementById('homeView').classList.remove('hidden'); };
-        document.getElementById('prevMonthBtn').onclick = () => { selectedMonth.setMonth(selectedMonth.getMonth()-1); renderAll(); };
-        document.getElementById('nextMonthBtn').onclick = () => { selectedMonth.setMonth(selectedMonth.getMonth()+1); renderAll(); };
-        document.getElementById('closeDetailBtn').onclick = () => document.getElementById('detailModal').classList.add('hidden');
-        
-        document.getElementById('photoBtn').onclick = () => document.getElementById('photoInput').click();
-        document.getElementById('photoInput').onchange = e => selectedAttachment = e.target.files[0];
-
-        document.getElementById('deleteTxBtn').onclick = async () => {
-            if(!confirm("Delete this entry?")) return;
-            await db.transaction(TX_STORE, 'readwrite').objectStore(TX_STORE).delete(currentDetailId);
-            await loadTransactions();
-            document.getElementById('detailModal').classList.add('hidden');
-            renderAll();
-        };
-
-        document.getElementById('exportBtn').onclick = () => {
-            const csv = transactions.map(t => `${t.dateISO},${t.category},${t.amount},${t.type}`).join('\n');
-            const blob = new Blob([csv], {type:'text/csv'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = 'Ledger_Export.csv'; a.click();
-        };
-    }
-
-    init();
+    function openEntry() { toggleModal('entryModal'); document.getElementById('fDate').valueAsDate = new Date(); syncOptions(); }
+    function toggleModal(id) { document.getElementById(id).classList.toggle('hidden'); }
+    function saveConfig() { localStorage.setItem('user_budget', document.getElementById('cfgBudget').value); renderAll(); }
+    
+    // --- INIT ---
+    openDB().then(d => { 
+      db = d; 
+      renderAll(); 
+      initPinScreen();
+      document.getElementById('cfgBudget').value = localStorage.getItem('user_budget') || "";
+      document.getElementById('cfgPin').checked = !!localStorage.getItem('app_pin');
+    });
   </script>
 </body>
 </html>
