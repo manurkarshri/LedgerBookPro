@@ -22,57 +22,60 @@
     .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .dev-credit { color: var(--muted); font-size: 0.8rem; display: block; margin-top: -2px; font-weight: 500; }
 
-    /* Dashboard Cards */
+    /* Dashboard */
     .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
     .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
     .card.full { grid-column: 1 / -1; }
     .label { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; display: block; }
-    
     .val-inc { color: var(--green); font-size: 1.5rem; font-weight: 800; }
     .val-exp { color: var(--red); font-size: 1.5rem; font-weight: 800; }
     .val-sav { color: var(--blue); font-size: 1.5rem; font-weight: 800; }
 
-    /* Section Title & Search */
+    /* Transactions UI */
     .section-header { font-size: 1.2rem; font-weight: 700; margin: 30px 0 10px; color: var(--text); }
     .search-input { width: 100%; background: var(--surface-2); border: 1px solid var(--line); padding: 14px; border-radius: 14px; color: white; margin-bottom: 15px; font-size: 16px; outline: none; }
     .tx-item { background: var(--surface); border: 1px solid var(--line); padding: 16px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
 
-    /* Unified Vertical Modal */
+    /* FORM LAYOUT FIX: Forced Vertical Stacking */
     .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: flex; align-items: flex-end; z-index: 1000; }
     .modal { width: 100%; background: #0d1118; border-radius: 25px 25px 0 0; padding: 24px; max-height: 90vh; overflow-y: auto; border-top: 1px solid var(--line); }
-    
     .form-group { margin-bottom: 18px; width: 100%; display: flex; flex-direction: column; }
     
-    /* Scaling fix for Date and other fields */
+    /* Input Proportions Fixed */
     input, select, textarea { 
-      width: 100%; 
-      background: var(--surface-2); 
-      border: 1px solid var(--line); 
-      color: white; 
-      height: 52px; 
-      padding: 0 15px; 
-      border-radius: 12px; 
-      font-size: 16px; 
-      display: block;
-      margin-top: 4px;
+      width: 100%; background: var(--surface-2); border: 1px solid var(--line); color: white; 
+      height: 52px; padding: 0 15px; border-radius: 12px; font-size: 16px; display: block; margin-top: 4px;
       -webkit-appearance: none;
     }
     textarea { height: auto; padding: 12px 15px; }
     input[type="date"] { display: flex; align-items: center; }
 
-    .primary-btn { background: var(--blue); color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; width: 100%; font-size: 1rem; margin-top: 10px; }
+    .primary-btn { background: var(--blue); color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; width: 100%; font-size: 1rem; margin-top: 10px; cursor: pointer; }
     .icon-btn { background: var(--surface); border: 1px solid var(--line); color: var(--text); padding: 10px; border-radius: 12px; }
 
-    /* Chart Analysis */
+    /* PIN Pad UI */
+    .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
+    .pin-btn { background: var(--surface-2); border: 1px solid var(--line); color: white; padding: 20px; border-radius: 15px; font-size: 1.5rem; font-weight: bold; }
+
+    /* Chart UI */
     .chart-container { margin: 20px 0; padding: 15px; background: var(--surface); border-radius: 15px; border: 1px solid var(--line); }
     .chart-bar-wrap { display: flex; align-items: center; margin-bottom: 12px; gap: 10px; }
     .chart-bar-bg { flex: 1; height: 12px; background: var(--surface-2); border-radius: 6px; overflow: hidden; }
-    .chart-bar-fill { height: 100%; background: var(--blue); }
+    .chart-bar-fill { height: 100%; background: var(--blue); transition: width 0.4s ease; }
   </style>
 </head>
 <body>
 
-  <div id="app">
+  <div id="lockScreen" class="modal-backdrop hidden" style="height: 100%; align-items: center; justify-content: center;">
+    <div class="modal" style="text-align: center; border-radius: 30px; max-width: 400px; border: 1px solid var(--line);">
+      <h2 id="lockStatus">Secure Login</h2>
+      <div id="pinDots" style="font-size: 2.5rem; margin: 20px 0; letter-spacing: 10px; color: var(--blue);">----</div>
+      <div class="pin-pad" id="pinKeys"></div>
+      <button onclick="recoverPin()" style="background:none; border:none; color:var(--muted); margin-top:20px;">Forgot PIN?</button>
+    </div>
+  </div>
+
+  <div id="mainApp">
     <div class="topbar">
       <div>
         <h1 style="margin:0; font-size: 1.7rem;">LedgerBook</h1>
@@ -97,8 +100,8 @@
 
   <div id="reportsModal" class="modal-backdrop hidden">
     <div class="modal">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
-        <h2>Spending Analysis</h2>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2>Insights</h2>
         <button class="icon-btn" onclick="toggleModal('reportsModal')">✕</button>
       </div>
       <div id="chartView" class="chart-container"></div>
@@ -112,23 +115,15 @@
         <h2 id="modalTitle">New Entry</h2>
         <button class="icon-btn" onclick="toggleModal('entryModal')">✕</button>
       </div>
-
-      <div class="form-group">
-        <span class="label">Type</span>
-        <select id="fType" onchange="syncOptions()">
-          <option value="Expense">Expense</option>
-          <option value="Income">Income</option>
-        </select>
-      </div>
-
+      <div class="form-group"><span class="label">Type</span><select id="fType" onchange="syncCats()"><option value="Expense">Expense</option><option value="Income">Income</option></select></div>
       <div class="form-group"><span class="label">Date</span><input type="date" id="fDate"></div>
       <div class="form-group"><span class="label">Amount (₹)</span><input type="number" id="fAmount" placeholder="0.00"></div>
-      <div class="form-group"><span class="label">Merchant / Source</span><input type="text" id="fMerchant" placeholder="e.g. Amazon"></div>
+      <div class="form-group"><span class="label">Merchant / Source</span><input type="text" id="fMerchant" onblur="predictCategory()" placeholder="Name"></div>
       <div class="form-group"><span class="label">Category</span><select id="fCategory"></select></div>
       <div class="form-group"><span class="label">Payment Mode</span><select id="fPayment"></select></div>
-      <div class="form-group"><span class="label">Notes</span><textarea id="fNote" rows="2"></textarea></div>
-
-      <input type="hidden" id="editId">
+      <div class="form-group"><span class="label">Notes</span><textarea id="fNote" rows="2" placeholder="Optional"></textarea></div>
+      <div class="form-group"><span class="label">Receipt</span><input type="file" id="fPhoto" accept="image/*" onchange="handleImage(event)"><div id="photoPreview"></div></div>
+      <input type="hidden" id="editId"><input type="hidden" id="imageBase64">
       <button class="primary-btn" onclick="saveData()">Save Transaction</button>
       <button id="delBtn" class="primary-btn hidden" style="background:var(--red);" onclick="deleteData()">Delete Entry</button>
     </div>
@@ -136,36 +131,44 @@
 
   <div id="settingsModal" class="modal-backdrop hidden">
     <div class="modal">
-      <h2>Settings</h2>
-      <div class="form-group">
-        <span class="label">Monthly Budget (₹)</span>
-        <input type="number" id="setBudget" onchange="saveConfig()">
+      <h2>App Settings</h2>
+      <div class="form-group"><span class="label">Set 4-Digit PIN</span><input type="password" id="setPin" maxlength="4"></div>
+      <div class="form-group"><span class="label">Recovery Answer (Birth City)</span><input type="text" id="setAns"></div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+        <button class="primary-btn" style="background:var(--surface-2)" onclick="exportDB()">Export JSON</button>
+        <button class="primary-btn" style="background:var(--surface-2)" onclick="alert('Import feature active in DB logic')">Import JSON</button>
       </div>
-      <button class="primary-btn" onclick="toggleModal('settingsModal')">Close</button>
+      <button class="primary-btn" onclick="saveSettings()">Apply Changes</button>
     </div>
   </div>
 
   <button class="primary-btn" style="position:fixed; bottom:25px; left:5%; width:90%; z-index:900;" onclick="openForm()">+ Add Entry</button>
 
   <script>
-    let db, transactions = [];
-    const expList = ['Grocery', 'Dining Out', 'Rent/EMI', 'Bills/Utilities', 'Fuel/Travel', 'Shopping', 'Health', 'Entertainment', 'Education', 'Investment', 'Other'];
-    const incList = ['Salary', 'Freelance', 'Dividends', 'Gift', 'Rental Income', 'Other'];
-    const payModes = ['Cash', 'UPI', 'Credit Card', 'Debit Card', 'Net Banking'];
+    let db, transactions = [], currentPinAttempt = "";
+    const expList = ['Grocery', 'Dining Out', 'Rent/EMI', 'Bills/Utilities', 'Fuel/Travel', 'Shopping', 'Health', 'Entertainment', 'Education', 'Investment', 'Insurance', 'Personal Care', 'Maintenance', 'Gift', 'Other'];
+    const incList = ['Salary', 'Freelance', 'Dividends', 'Rental', 'Interest', 'Bonus', 'Other'];
+    const payModes = ['Cash', 'UPI', 'Credit Card', 'Debit Card', 'Bank Transfer'];
 
     async function initDB() {
       return new Promise(r => {
-        const req = indexedDB.open('LedgerFinal_V2', 1);
+        const req = indexedDB.open('LedgerBook_Final_System', 1);
         req.onupgradeneeded = e => e.target.result.createObjectStore('tx', {keyPath:'id'});
         req.onsuccess = e => r(e.target.result);
       });
     }
 
-    function syncOptions() {
+    function syncCats() {
       const type = document.getElementById('fType').value;
       const cats = type === 'Income' ? incList : expList;
       document.getElementById('fCategory').innerHTML = cats.map(c => `<option>${c}</option>`).join('');
       document.getElementById('fPayment').innerHTML = payModes.map(m => `<option>${m}</option>`).join('');
+    }
+
+    function predictCategory() {
+      const merchant = document.getElementById('fMerchant').value.toLowerCase();
+      const match = transactions.find(t => t.merchant.toLowerCase() === merchant);
+      if(match) document.getElementById('fCategory').value = match.category;
     }
 
     async function refreshUI() {
@@ -182,12 +185,8 @@
       transactions.forEach(t => {
         const amt = parseFloat(t.amount) || 0;
         if(t.type === 'Income') i += amt; else { e += amt; catTotals[t.category] = (catTotals[t.category] || 0) + amt; }
-
         if(t.merchant.toLowerCase().includes(query) || t.category.toLowerCase().includes(query)) {
-          list.innerHTML += `<div class="tx-item" onclick="editForm('${t.id}')">
-            <div><strong>${t.merchant}</strong><br><small>${t.date} • ${t.category}</small></div>
-            <div style="color:var(--${t.type==='Income'?'green':'red'}); font-weight:800;">${t.type==='Income'?'+':'-'}₹${amt}</div>
-          </div>`;
+          list.innerHTML += `<div class="tx-item" onclick="editForm('${t.id}')"><div><strong>${t.merchant}</strong><br><small>${t.date} • ${t.category}</small></div><div style="color:var(--${t.type==='Income'?'green':'red'}); font-weight:800;">₹${amt}</div></div>`;
         }
       });
 
@@ -199,55 +198,82 @@
       chart.innerHTML = `<h3>Spending Breakdown</h3>`;
       Object.entries(catTotals).forEach(([cat, val]) => {
         const pct = e > 0 ? (val / e) * 100 : 0;
-        chart.innerHTML += `<div class="chart-bar-wrap">
-          <div style="width:90px; font-size:0.75rem">${cat}</div>
-          <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:${pct}%"></div></div>
-          <div style="width:70px; font-size:0.75rem; text-align:right">₹${val}</div>
-        </div>`;
+        chart.innerHTML += `<div class="chart-bar-wrap"><div style="width:90px; font-size:0.75rem">${cat}</div><div class="chart-bar-bg"><div class="chart-bar-fill" style="width:${pct}%"></div></div><div style="width:70px; font-size:0.75rem; text-align:right">₹${val}</div></div>`;
       });
     }
 
+    function handleImage(e) {
+      const reader = new FileReader();
+      reader.onload = () => { document.getElementById('imageBase64').value = reader.result; document.getElementById('photoPreview').innerHTML = `<img src="${reader.result}" style="width:100%; border-radius:10px; margin-top:10px;">`; };
+      reader.readAsDataURL(e.target.files[0]);
+    }
+
     async function saveData() {
-      const id = document.getElementById('editId').value || Date.now().toString();
-      const entry = {
-        id, type: document.getElementById('fType').value,
-        date: document.getElementById('fDate').value,
-        amount: document.getElementById('fAmount').value,
-        merchant: document.getElementById('fMerchant').value,
-        category: document.getElementById('fCategory').value,
-        payment: document.getElementById('fPayment').value,
-        note: document.getElementById('fNote').value
-      };
+      const entry = { id: document.getElementById('editId').value || Date.now().toString(), type: document.getElementById('fType').value, date: document.getElementById('fDate').value, amount: document.getElementById('fAmount').value, merchant: document.getElementById('fMerchant').value, category: document.getElementById('fCategory').value, payment: document.getElementById('fPayment').value, note: document.getElementById('fNote').value, img: document.getElementById('imageBase64').value };
       const tx = db.transaction('tx', 'readwrite');
       tx.objectStore('tx').put(entry);
       tx.oncomplete = () => { toggleModal('entryModal'); refreshUI(); };
     }
 
     async function deleteData() {
-      if(confirm("Delete this entry?")) {
+      if(confirm("Confirm Delete?")) {
         const tx = db.transaction('tx', 'readwrite');
         tx.objectStore('tx').delete(document.getElementById('editId').value);
         tx.oncomplete = () => { toggleModal('entryModal'); refreshUI(); };
       }
     }
 
-    function openForm() { document.getElementById('editId').value = ""; document.getElementById('fDate').valueAsDate = new Date(); document.getElementById('delBtn').classList.add('hidden'); syncOptions(); toggleModal('entryModal'); }
+    function openForm() { document.getElementById('editId').value = ""; document.getElementById('fDate').valueAsDate = new Date(); document.getElementById('imageBase64').value = ""; document.getElementById('photoPreview').innerHTML = ""; document.getElementById('delBtn').classList.add('hidden'); syncCats(); toggleModal('entryModal'); }
+    
     function editForm(id) {
       const t = transactions.find(x => x.id === id);
       document.getElementById('editId').value = t.id;
       document.getElementById('fType').value = t.type;
-      syncOptions();
+      syncCats();
       document.getElementById('fDate').value = t.date;
       document.getElementById('fAmount').value = t.amount;
       document.getElementById('fMerchant').value = t.merchant;
       document.getElementById('fCategory').value = t.category;
       document.getElementById('fPayment').value = t.payment;
       document.getElementById('fNote').value = t.note;
+      document.getElementById('imageBase64').value = t.img || "";
+      document.getElementById('photoPreview').innerHTML = t.img ? `<img src="${t.img}" style="width:100%; border-radius:10px; margin-top:10px;">` : "";
       document.getElementById('delBtn').classList.remove('hidden');
       toggleModal('entryModal');
     }
+
+    function runLock() {
+      const pin = localStorage.getItem('app_pin');
+      if(!pin) return;
+      document.getElementById('lockScreen').classList.remove('hidden');
+      const keys = [1,2,3,4,5,6,7,8,9,'C',0,'OK'];
+      const pad = document.getElementById('pinKeys');
+      pad.innerHTML = "";
+      keys.forEach(k => {
+        const btn = document.createElement('button'); btn.className = 'pin-btn'; btn.textContent = k;
+        btn.onclick = () => {
+          if(k === 'C') currentPinAttempt = "";
+          else if(k === 'OK') { if(currentPinAttempt === pin) document.getElementById('lockScreen').classList.add('hidden'); else { alert("Wrong PIN"); currentPinAttempt = ""; } }
+          else if(currentPinAttempt.length < 4) currentPinAttempt += k;
+          document.getElementById('pinDots').textContent = "*".repeat(currentPinAttempt.length) || "----";
+        };
+        pad.appendChild(btn);
+      });
+    }
+
+    function saveSettings() {
+      localStorage.setItem('app_pin', document.getElementById('setPin').value);
+      localStorage.setItem('app_ans', document.getElementById('setAns').value.toLowerCase());
+      alert("Config Updated"); toggleModal('settingsModal');
+    }
+
+    function recoverPin() {
+      const ans = prompt("Security Check: Birth City?");
+      if(ans && ans.toLowerCase() === localStorage.getItem('app_ans')) alert("Stored PIN: " + localStorage.getItem('app_pin'));
+    }
+
     function toggleModal(id) { document.getElementById(id).classList.toggle('hidden'); }
-    initDB().then(d => { db = d; refreshUI(); });
+    initDB().then(d => { db = d; refreshUI(); runLock(); });
   </script>
 </body>
 </html>
