@@ -18,11 +18,11 @@
     body { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, system-ui, sans-serif; padding: 20px 16px 120px; }
     .hidden { display: none !important; }
     
-    /* Branding & Developer Credit */
+    /* Branding */
     .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .dev-credit { color: var(--muted); font-size: 0.8rem; display: block; margin-top: -2px; font-weight: 500; }
 
-    /* Dashboard Cards */
+    /* Dashboard Cards - Color Coded */
     .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
     .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
     .card.full { grid-column: 1 / -1; }
@@ -32,50 +32,59 @@
     .val-exp { color: var(--red); font-size: 1.5rem; font-weight: 800; }
     .val-sav { color: var(--blue); font-size: 1.5rem; font-weight: 800; }
 
-    /* Transaction List */
+    /* List & Search */
     .search-input { width: 100%; background: var(--surface-2); border: 1px solid var(--line); padding: 14px; border-radius: 14px; color: white; margin: 15px 0; font-size: 16px; outline: none; }
     .tx-item { background: var(--surface); border: 1px solid var(--line); padding: 16px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
 
-    /* Vertical Modal Layout (Anti-Overlap) */
+    /* UNIFIED VERTICAL LAYOUT - FIXED PROPORTIONS */
     .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: flex; align-items: flex-end; z-index: 1000; }
     .modal { width: 100%; background: #0d1118; border-radius: 25px 25px 0 0; padding: 24px; max-height: 90vh; overflow-y: auto; border-top: 1px solid var(--line); }
     
-    .form-group { margin-bottom: 18px; width: 100%; display: block; }
+    .form-group { margin-bottom: 18px; width: 100%; display: flex; flex-direction: column; }
+    
+    /* Ensuring all fields (including date) have identical height and scaling */
     input, select, textarea { 
       width: 100%; 
       background: var(--surface-2); 
       border: 1px solid var(--line); 
       color: white; 
-      padding: 15px; 
+      height: 52px; /* Fixed height for all */
+      padding: 0 15px; 
       border-radius: 12px; 
       font-size: 16px; 
       display: block;
       margin-top: 4px;
+      -webkit-appearance: none; /* Removes iOS default styling */
+    }
+    textarea { height: auto; padding: 12px 15px; }
+    
+    /* Specific fix for the date input to match height on iOS/Chrome */
+    input[type="date"] {
+      display: flex;
+      align-items: center;
+      line-height: normal;
     }
 
-    .primary-btn { background: var(--blue); color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; width: 100%; font-size: 1rem; margin-top: 10px; }
+    .primary-btn { background: var(--blue); color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; width: 100%; font-size: 1rem; margin-top: 10px; cursor: pointer; }
     .icon-btn { background: var(--surface); border: 1px solid var(--line); color: var(--text); padding: 10px; border-radius: 12px; }
-    
-    #photoPreview img { width: 100%; border-radius: 12px; margin-top: 10px; border: 1px solid var(--line); }
+
+    /* Chart Restoration */
+    .chart-container { margin: 20px 0; padding: 15px; background: var(--surface); border-radius: 15px; border: 1px solid var(--line); }
+    .chart-bar-wrap { display: flex; align-items: center; margin-bottom: 12px; gap: 10px; }
+    .chart-bar-bg { flex: 1; height: 12px; background: var(--surface-2); border-radius: 6px; overflow: hidden; }
+    .chart-bar-fill { height: 100%; background: var(--blue); }
   </style>
 </head>
 <body>
 
-  <div id="lockScreen" class="modal-backdrop hidden" style="height: 100%; align-items: center; justify-content: center;">
-    <div class="modal" style="text-align: center; border-radius: 30px; max-width: 400px; border: 1px solid var(--line);">
-      <h2>Enter PIN</h2>
-      <div id="pinDots" style="font-size: 2.5rem; margin: 20px 0; letter-spacing: 10px; color: var(--blue);">----</div>
-      <div id="pinPad" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;"></div>
-    </div>
-  </div>
-
-  <div id="appContainer">
+  <div id="app">
     <div class="topbar">
       <div>
         <h1 style="margin:0; font-size: 1.7rem;">LedgerBook</h1>
         <span class="dev-credit">Developed by Shriganesh Manurkar</span>
       </div>
       <div style="display:flex; gap:10px;">
+        <button class="icon-btn" onclick="toggleModal('reportsModal')">📊</button>
         <button class="icon-btn" onclick="toggleModal('settingsModal')">⚙️</button>
       </div>
     </div>
@@ -83,11 +92,22 @@
     <div class="cards">
       <div class="card"><span class="label">Income</span><div class="val-inc" id="hInc">₹0</div></div>
       <div class="card"><span class="label">Expense</span><div class="val-exp" id="hExp">₹0</div></div>
-      <div class="card full" id="budgetCard"><span class="label">Net Savings</span><div class="val-sav" id="hSav">₹0</div></div>
+      <div class="card full"><span class="label">Net Savings</span><div class="val-sav" id="hSav">₹0</div></div>
     </div>
 
     <input type="text" id="txSearch" class="search-input" placeholder="Search entries..." oninput="refreshUI()">
     <div id="txList"></div>
+  </div>
+
+  <div id="reportsModal" class="modal-backdrop hidden">
+    <div class="modal">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
+        <h2>Spending Analysis</h2>
+        <button class="icon-btn" onclick="toggleModal('reportsModal')">✕</button>
+      </div>
+      <div id="chartView" class="chart-container"></div>
+      <button class="primary-btn" onclick="toggleModal('reportsModal')">Close</button>
+    </div>
   </div>
 
   <div id="entryModal" class="modal-backdrop hidden">
@@ -99,7 +119,7 @@
 
       <div class="form-group">
         <span class="label">Type</span>
-        <select id="fType" onchange="syncCategories()">
+        <select id="fType" onchange="syncOptions()">
           <option value="Expense">Expense</option>
           <option value="Income">Income</option>
         </select>
@@ -111,7 +131,7 @@
       </div>
 
       <div class="form-group">
-        <span class="label">Amount</span>
+        <span class="label">Amount (₹)</span>
         <input type="number" id="fAmount" placeholder="0.00" inputmode="decimal">
       </div>
 
@@ -137,8 +157,7 @@
 
       <div class="form-group">
         <span class="label">Attachment</span>
-        <input type="file" id="fPhoto" accept="image/*">
-        <div id="photoPreview"></div>
+        <input type="file" id="fPhoto" accept="image/*" style="padding-top: 12px;">
       </div>
 
       <input type="hidden" id="editId">
@@ -154,28 +173,28 @@
         <span class="label">Monthly Budget (₹)</span>
         <input type="number" id="setBudget" onchange="saveConfig()">
       </div>
-      <button class="primary-btn" onclick="exportData()">Export Data</button>
+      <button class="primary-btn" onclick="exportData()">Export Backup</button>
       <button class="primary-btn" onclick="toggleModal('settingsModal')" style="margin-top:10px;">Close</button>
     </div>
   </div>
 
-  <button class="primary-btn" style="position:fixed; bottom:25px; left:5%; width:90%;" onclick="openForm()">+ Add Entry</button>
+  <button class="primary-btn" style="position:fixed; bottom:25px; left:5%; width:90%; z-index:900;" onclick="openForm()">+ Add Entry</button>
 
   <script>
     let db, transactions = [];
-    const expList = ['Grocery', 'Dining Out', 'Rent/EMI', 'Bills/Utilities', 'Fuel/Travel', 'Shopping', 'Health/Medical', 'Entertainment', 'Education', 'Investment', 'Maintenance', 'Gift/Donation', 'Insurance', 'Personal Care', 'Other'];
-    const incList = ['Salary', 'Freelance', 'Dividends', 'Gift', 'Rental Income', 'Interest', 'Bonus', 'Other'];
-    const payModes = ['Cash', 'UPI', 'Credit Card', 'Debit Card', 'Net Banking', 'Bank Transfer'];
+    const expList = ['Grocery', 'Dining Out', 'Rent/EMI', 'Bills/Utilities', 'Fuel/Travel', 'Shopping', 'Health', 'Entertainment', 'Education', 'Investment', 'Insurance', 'Other'];
+    const incList = ['Salary', 'Freelance', 'Dividends', 'Gift', 'Rental Income', 'Other'];
+    const payModes = ['Cash', 'UPI', 'Credit Card', 'Debit Card', 'Net Banking'];
 
     async function initDB() {
       return new Promise(r => {
-        const req = indexedDB.open('LedgerPro_Main', 1);
+        const req = indexedDB.open('LedgerFinal_V1', 1);
         req.onupgradeneeded = e => e.target.result.createObjectStore('tx', {keyPath:'id'});
         req.onsuccess = e => r(e.target.result);
       });
     }
 
-    function syncCategories() {
+    function syncOptions() {
       const type = document.getElementById('fType').value;
       const cats = type === 'Income' ? incList : expList;
       document.getElementById('fCategory').innerHTML = cats.map(c => `<option>${c}</option>`).join('');
@@ -190,31 +209,50 @@
 
       let i=0, e=0;
       const list = document.getElementById('txList');
+      const catTotals = {};
       list.innerHTML = "";
 
       transactions.forEach(t => {
-        if(!t.merchant.toLowerCase().includes(query) && !t.category.toLowerCase().includes(query)) return;
-        if(t.type === 'Income') i += parseFloat(t.amount); else e += parseFloat(t.amount);
-        
-        list.innerHTML += `
-          <div class="tx-item" onclick="editForm('${t.id}')">
-            <div><strong>${t.merchant}</strong><br><small style="color:var(--muted)">${t.date} • ${t.category}</small></div>
-            <div style="color:var(--${t.type==='Income'?'green':'red'}); font-weight:800;">
-              ${t.type==='Income'?'+':'-'}₹${t.amount}
-            </div>
-          </div>`;
+        const amt = parseFloat(t.amount) || 0;
+        if(t.type === 'Income') i += amt; 
+        else {
+          e += amt;
+          catTotals[t.category] = (catTotals[t.category] || 0) + amt;
+        }
+
+        if(t.merchant.toLowerCase().includes(query) || t.category.toLowerCase().includes(query)) {
+          list.innerHTML += `
+            <div class="tx-item" onclick="editForm('${t.id}')">
+              <div><strong>${t.merchant || t.category}</strong><br><small>${t.date} • ${t.payment}</small></div>
+              <div style="color:var(--${t.type==='Income'?'green':'red'}); font-weight:800;">
+                ${t.type==='Income'?'+':'-'}₹${amt}
+              </div>
+            </div>`;
+        }
       });
 
       document.getElementById('hInc').textContent = `₹${i}`;
       document.getElementById('hExp').textContent = `₹${e}`;
       document.getElementById('hSav').textContent = `₹${i-e}`;
+
+      // Chart Update
+      const chart = document.getElementById('chartView');
+      chart.innerHTML = `<h3>Spending Breakdown</h3>`;
+      Object.entries(catTotals).forEach(([cat, val]) => {
+        const pct = e > 0 ? (val / e) * 100 : 0;
+        chart.innerHTML += `
+          <div class="chart-bar-wrap">
+            <div style="width:90px; font-size:0.75rem">${cat}</div>
+            <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:${pct}%"></div></div>
+            <div style="width:70px; font-size:0.75rem; text-align:right">₹${val}</div>
+          </div>`;
+      });
     }
 
     async function saveData() {
       const id = document.getElementById('editId').value || Date.now().toString();
       const entry = {
-        id,
-        type: document.getElementById('fType').value,
+        id, type: document.getElementById('fType').value,
         date: document.getElementById('fDate').value,
         amount: document.getElementById('fAmount').value,
         merchant: document.getElementById('fMerchant').value,
@@ -227,11 +265,20 @@
       tx.oncomplete = () => { toggleModal('entryModal'); refreshUI(); };
     }
 
+    async function deleteData() {
+      const id = document.getElementById('editId').value;
+      if(confirm("Delete this entry?")) {
+        const tx = db.transaction('tx', 'readwrite');
+        tx.objectStore('tx').delete(id);
+        tx.oncomplete = () => { toggleModal('entryModal'); refreshUI(); };
+      }
+    }
+
     function openForm() {
       document.getElementById('editId').value = "";
       document.getElementById('fDate').valueAsDate = new Date();
       document.getElementById('delBtn').classList.add('hidden');
-      syncCategories();
+      syncOptions();
       toggleModal('entryModal');
     }
 
@@ -239,7 +286,7 @@
       const t = transactions.find(x => x.id === id);
       document.getElementById('editId').value = t.id;
       document.getElementById('fType').value = t.type;
-      syncCategories();
+      syncOptions();
       document.getElementById('fDate').value = t.date;
       document.getElementById('fAmount').value = t.amount;
       document.getElementById('fMerchant').value = t.merchant;
