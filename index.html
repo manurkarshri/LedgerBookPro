@@ -15,14 +15,19 @@
       --radius: 14px;
     }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-    body { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, system-ui, sans-serif; padding: 15px 15px 100px; overflow-x: hidden; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, system-ui, sans-serif; padding: 15px 15px 100px; }
     .hidden { display: none !important; }
     
-    /* Branding */
-    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .dev-credit { color: var(--muted); font-size: 0.75rem; display: block; font-weight: 500; }
+    /* Top Navigation */
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .dev-credit { color: var(--muted); font-size: 0.75rem; font-weight: 500; }
 
-    /* Dashboard */
+    /* Monthly Filter Heading */
+    .filter-header { background: var(--surface); padding: 12px; border-radius: 12px; border: 1px solid var(--line); margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+    .filter-header h2 { margin: 0; font-size: 1rem; color: var(--muted); text-transform: uppercase; }
+    .month-select { background: transparent; border: none; color: var(--blue); font-weight: 800; font-size: 1.1rem; cursor: pointer; }
+
+    /* Dashboard Cards */
     .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
     .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
     .card.full { grid-column: 1 / -1; }
@@ -31,33 +36,34 @@
     .val-exp { color: var(--red); font-size: 1.3rem; font-weight: 800; }
     .val-sav { color: var(--blue); font-size: 1.3rem; font-weight: 800; }
 
-    /* Transactions UI */
-    .section-header { font-size: 1.1rem; font-weight: 700; margin: 20px 0 10px; }
-    .search-input { width: 100%; background: var(--surface-2); border: 1px solid var(--line); padding: 12px; border-radius: 12px; color: white; margin-bottom: 12px; font-size: 15px; }
+    /* Transactions */
+    .section-header { font-size: 1.1rem; font-weight: 700; margin: 15px 0 10px; }
+    .search-input { width: 100%; background: var(--surface-2); border: 1px solid var(--line); padding: 12px; border-radius: 12px; color: white; margin-bottom: 10px; font-size: 15px; }
     .tx-item { background: var(--surface); border: 1px solid var(--line); padding: 12px; border-radius: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
 
-    /* FORM LAYOUT: Optimized for No-Scroll */
+    /* One-Page Scroll-Free Modal */
     .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); display: flex; align-items: flex-end; z-index: 1000; }
-    .modal { width: 100%; background: #0d1118; border-radius: 20px 20px 0 0; padding: 18px; max-height: 95vh; border-top: 1px solid var(--line); }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-    .form-group { margin-bottom: 12px; width: 100%; display: flex; flex-direction: column; }
+    .modal { width: 100%; background: #0d1118; border-radius: 20px 20px 0 0; padding: 15px; max-height: 98vh; border-top: 1px solid var(--line); overflow: hidden; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .form-group { margin-bottom: 8px; width: 100%; display: flex; flex-direction: column; }
     
     input, select, textarea { 
       width: 100%; background: var(--surface-2); border: 1px solid var(--line); color: white; 
-      height: 44px; padding: 0 12px; border-radius: 10px; font-size: 15px; margin-top: 2px;
+      height: 42px; padding: 0 10px; border-radius: 10px; font-size: 15px; margin-top: 2px;
     }
-    textarea { height: 60px; padding: 10px; resize: none; }
+    textarea { height: 45px; padding: 8px; resize: none; }
     
-    /* Unified Date Picker Styling */
-    input[type="date"] { position: relative; display: block; -webkit-appearance: none; }
+    /* Date field fix */
+    input[type="date"] { appearance: none; -webkit-appearance: none; }
 
-    .primary-btn { background: var(--blue); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 700; width: 100%; font-size: 1rem; margin-top: 5px; }
+    .primary-btn { background: var(--blue); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 700; width: 100%; font-size: 1rem; margin-top: 5px; }
     .icon-btn { background: var(--surface); border: 1px solid var(--line); color: var(--text); padding: 8px 10px; border-radius: 10px; }
 
-    /* Security */
+    /* Security PIN Pad */
     .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 15px; }
     .pin-btn { background: var(--surface-2); border: 1px solid var(--line); color: white; padding: 18px; border-radius: 14px; font-size: 1.3rem; font-weight: bold; }
     
+    /* Charts */
     .chart-box { background: var(--surface); border: 1px solid var(--line); padding: 12px; border-radius: var(--radius); margin-bottom: 12px; }
     .bar-wrap { display: flex; align-items: center; margin-top: 8px; gap: 8px; font-size: 0.8rem; }
     .bar-bg { flex: 1; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
@@ -68,17 +74,17 @@
 
   <div id="lockScreen" class="modal-backdrop hidden" style="height: 100%; align-items: center; justify-content: center;">
     <div class="modal" style="text-align: center; border-radius: 25px; max-width: 380px;">
-      <h2 id="lockTitle" style="margin-top:0">Secure Entry</h2>
+      <h2 id="lockTitle">Secure Entry</h2>
       <div id="pinDots" style="font-size: 2rem; margin: 10px 0; letter-spacing: 8px; color: var(--blue);">----</div>
       <div class="pin-pad" id="pinKeys"></div>
-      <button onclick="handleRecovery()" style="background:none; border:none; color:var(--muted); margin-top:15px; text-decoration: underline; font-size: 0.9rem;">Forgot PIN?</button>
+      <button onclick="handleRecovery()" style="background:none; border:none; color:var(--muted); margin-top:15px; text-decoration: underline;">Forgot PIN?</button>
     </div>
   </div>
 
   <div id="app">
     <div class="topbar">
       <div>
-        <h1 style="margin:0; font-size: 1.5rem;">LedgerBook</h1>
+        <h1 style="margin:0; font-size: 1.4rem;">LedgerBook</h1>
         <span class="dev-credit">Shriganesh Manurkar</span>
       </div>
       <div style="display:flex; gap:8px;">
@@ -87,10 +93,15 @@
       </div>
     </div>
 
+    <div class="filter-header">
+      <h2>Monthly Summary</h2>
+      <input type="month" id="monthFilter" class="month-select" onchange="refreshUI()">
+    </div>
+
     <div class="cards">
-      <div class="card"><span class="label">Income</span><div class="val-inc" id="hInc">₹0</div></div>
-      <div class="card"><span class="label">Expense</span><div class="val-exp" id="hExp">₹0</div></div>
-      <div class="card full"><span class="label">Net Balance</span><div class="val-sav" id="hSav">₹0</div></div>
+      <div class="card"><span class="label">Inc</span><div class="val-inc" id="hInc">₹0</div></div>
+      <div class="card"><span class="label">Exp</span><div class="val-exp" id="hExp">₹0</div></div>
+      <div class="card full"><span class="label">Net Savings</span><div class="val-sav" id="hSav">₹0</div></div>
     </div>
 
     <div class="section-header">Transactions</div>
@@ -99,9 +110,9 @@
   </div>
 
   <div id="reportsModal" class="modal-backdrop hidden">
-    <div class="modal">
+    <div class="modal" style="max-height: 90vh; overflow-y: auto;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
-        <h2>Insights</h2>
+        <h2>Top 5 Expenses</h2>
         <button class="icon-btn" onclick="toggleModal('reportsModal')">✕</button>
       </div>
       <div id="analyticsContent"></div>
@@ -111,8 +122,8 @@
 
   <div id="entryModal" class="modal-backdrop hidden">
     <div class="modal">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <h2 id="modalTitle" style="margin:0; font-size: 1.2rem;">New Record</h2>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h2 id="modalTitle" style="margin:0; font-size: 1.1rem;">Record Entry</h2>
         <button class="icon-btn" onclick="toggleModal('entryModal')">✕</button>
       </div>
       
@@ -127,35 +138,32 @@
 
       <div class="form-grid">
         <div class="form-group"><span class="label">Category</span><select id="fCategory"></select></div>
-        <div class="form-group"><span class="label">Payment</span><select id="fPayment"></select></div>
+        <div class="form-group"><span class="label">Mode</span><select id="fPayment"></select></div>
       </div>
 
-      <div class="form-group"><span class="label">Notes</span><textarea id="fNote" rows="1" placeholder="Optional"></textarea></div>
+      <div class="form-group"><span class="label">Notes</span><textarea id="fNote" rows="1"></textarea></div>
       
-      <div style="display:flex; gap:10px; align-items:center; margin-bottom: 10px;">
-        <div style="flex:1"><span class="label">Receipt</span><input type="file" accept="image/*" onchange="handleImg(event)" style="height:38px; padding:5px; font-size:12px"></div>
-        <div id="fPreview" style="width:40px; height:40px; border-radius:6px; background:var(--surface-2); overflow:hidden;"></div>
+      <div style="display:flex; gap:10px; align-items:center; margin-bottom: 5px;">
+        <div style="flex:1"><span class="label">Receipt</span><input type="file" accept="image/*" onchange="handleImg(event)" style="height:35px; padding:5px; font-size:12px"></div>
+        <div id="fPreview" style="width:35px; height:35px; border-radius:6px; background:var(--surface-2); overflow:hidden;"></div>
       </div>
 
       <input type="hidden" id="editId"><input type="hidden" id="fImgBase64">
       <button class="primary-btn" onclick="saveEntry()">Save Transaction</button>
-      <button id="delBtn" class="primary-btn hidden" style="background:var(--red); margin-top:5px; padding:10px;" onclick="deleteEntry()">Delete</button>
+      <button id="delBtn" class="primary-btn hidden" style="background:var(--red); margin-top:5px; padding:8px;" onclick="deleteEntry()">Delete</button>
     </div>
   </div>
 
   <div id="settingsModal" class="modal-backdrop hidden">
     <div class="modal">
-      <h2 style="margin-top:0">Security</h2>
-      <div id="securitySetup">
-        <div class="form-group"><span class="label">Set/Change 4-Digit PIN</span><input type="password" id="setPin" maxlength="4" placeholder="••••"></div>
-        <div id="qSection">
-          <div class="form-group"><span class="label">Recovery Question (One-time setup)</span><input type="text" id="setQ" placeholder="e.g. First School?"></div>
-          <div class="form-group"><span class="label">Answer</span><input type="text" id="setA" placeholder="Your answer"></div>
-        </div>
+      <h2>App Settings</h2>
+      <div class="form-group"><span class="label">Set PIN</span><input type="password" id="setPin" maxlength="4"></div>
+      <div id="qSection">
+        <div class="form-group"><span class="label">Question</span><input type="text" id="setQ"></div>
+        <div class="form-group"><span class="label">Answer</span><input type="text" id="setA"></div>
       </div>
-      <button class="primary-btn" onclick="saveSettings()">Apply Security Changes</button>
-      <button class="primary-btn" style="background:var(--surface-2); margin-top:10px" onclick="exportJSON()">Export JSON Backup</button>
-      <button class="primary-btn" onclick="toggleModal('settingsModal')" style="background:none">Cancel</button>
+      <button class="primary-btn" onclick="saveSettings()">Save Security</button>
+      <button class="primary-btn" onclick="toggleModal('settingsModal')" style="background:none">Close</button>
     </div>
   </div>
 
@@ -163,13 +171,14 @@
 
   <script>
     let db, transactions = [], pinInput = "";
-    const expList = ['Grocery', 'Dining', 'Rent', 'Bills', 'Travel', 'Shopping', 'Health', 'Investment', 'Other'];
-    const incList = ['Salary', 'Freelance', 'Dividends', 'Gift'];
-    const payModes = ['UPI', 'Cash', 'Card', 'Net Banking'];
+    // RESTORED FULL CATEGORIES
+    const expList = ['Grocery', 'Dining Out', 'Rent/EMI', 'Bills/Utilities', 'Fuel/Travel', 'Shopping', 'Health', 'Entertainment', 'Education', 'Investment', 'Insurance', 'Personal Care', 'Maintenance', 'Gift', 'Other'];
+    const incList = ['Salary', 'Freelance', 'Dividends', 'Rental', 'Interest', 'Bonus', 'Other'];
+    const payModes = ['UPI/Digital', 'Cash', 'Credit Card', 'Debit Card', 'Bank Transfer'];
 
     async function initDB() {
       return new Promise(r => {
-        const req = indexedDB.open('LedgerBook_v4', 1);
+        const req = indexedDB.open('LedgerPro_Final_2026', 1);
         req.onupgradeneeded = e => e.target.result.createObjectStore('tx', {keyPath:'id'});
         req.onsuccess = e => r(e.target.result);
       });
@@ -184,6 +193,7 @@
 
     async function refreshUI() {
       const q = document.getElementById('txSearch').value.toLowerCase();
+      const monthVal = document.getElementById('monthFilter').value; // e.g. "2026-04"
       const store = db.transaction('tx','readonly').objectStore('tx');
       transactions = await new Promise(r => store.getAll().onsuccess = e => r(e.target.result));
       transactions.sort((a,b) => new Date(b.date) - new Date(a.date));
@@ -193,8 +203,11 @@
       list.innerHTML = "";
 
       transactions.forEach(t => {
+        if(!t.date.startsWith(monthVal)) return; // Filter by month
+
         const amt = parseFloat(t.amount) || 0;
         if(t.type === 'Income') i += amt; else e += amt;
+        
         if(t.merchant.toLowerCase().includes(q) || t.category.toLowerCase().includes(q)) {
           list.innerHTML += `<div class="tx-item" onclick="editForm('${t.id}')"><div><strong>${t.merchant}</strong><br><small>${t.date} • ${t.category}</small></div><div style="color:var(--${t.type==='Income'?'green':'red'}); font-weight:800;">₹${amt}</div></div>`;
         }
@@ -205,14 +218,22 @@
     }
 
     function renderAnalytics() {
-      const content = document.getElementById('analyticsContent');
+      const monthVal = document.getElementById('monthFilter').value;
       let exp = 0, catMap = {};
-      transactions.forEach(t => { if(t.type==='Expense'){ const a=parseFloat(t.amount)||0; exp+=a; catMap[t.category]=(catMap[t.category]||0)+a; } });
-      let html = `<div class="chart-box"><h3>Expenses by Category</h3>`;
-      Object.entries(catMap).forEach(([k,v]) => {
-        html += `<div class="bar-wrap"><span style="width:70px">${k}</span><div class="bar-bg"><div class="bar-fill" style="width:${(v/exp)*100}%"></div></div><span>₹${v}</span></div>`;
+      transactions.forEach(t => { 
+        if(t.type==='Expense' && t.date.startsWith(monthVal)){ 
+          const a=parseFloat(t.amount)||0; exp+=a; 
+          catMap[t.category]=(catMap[t.category]||0)+a; 
+        } 
       });
-      content.innerHTML = html + `</div>`;
+
+      // Sort and get Top 5
+      const sorted = Object.entries(catMap).sort((a,b) => b[1] - a[1]).slice(0, 5);
+      let html = `<div class="chart-box"><h3>Month Expense Split</h3>`;
+      sorted.forEach(([k,v]) => {
+        html += `<div class="bar-wrap"><span style="width:80px">${k}</span><div class="bar-bg"><div class="bar-fill" style="width:${(v/exp)*100}%"></div></div><span>₹${v}</span></div>`;
+      });
+      document.getElementById('analyticsContent').innerHTML = html + `</div>`;
     }
 
     function openForm() {
@@ -251,20 +272,18 @@
       tx.oncomplete = () => { toggleModal('entryModal'); refreshUI(); };
     }
 
-    function handleImg(e) {
+    function handleImg(event) {
       const reader = new FileReader();
       reader.onload = () => { document.getElementById('fImgBase64').value = reader.result; document.getElementById('fPreview').innerHTML = `<img src="${reader.result}" style="width:100%; height:100%; object-fit:cover">`; };
-      reader.readAsDataURL(e.target.files[0]);
+      reader.readAsDataURL(event.target.files[0]);
     }
 
-    // SECURITY SYSTEM
     function runLock() {
       const pin = localStorage.getItem('app_pin');
       if(localStorage.getItem('app_q')) document.getElementById('qSection').classList.add('hidden');
       if(!pin) return;
       document.getElementById('lockScreen').classList.remove('hidden');
-      const pad = document.getElementById('pinKeys');
-      pad.innerHTML = [1,2,3,4,5,6,7,8,9,'C',0,'OK'].map(k => `<button class="pin-btn" onclick="tapPin('${k}')">${k}</button>`).join('');
+      document.getElementById('pinKeys').innerHTML = [1,2,3,4,5,6,7,8,9,'C',0,'OK'].map(k => `<button class="pin-btn" onclick="tapPin('${k}')">${k}</button>`).join('');
     }
 
     function tapPin(k) {
@@ -277,12 +296,11 @@
     function handleRecovery() {
       const q = localStorage.getItem('app_q');
       const a = localStorage.getItem('app_a');
-      if(!q) { alert("No recovery set. Clear browser cache to reset."); return; }
       const userA = prompt("Recovery Question: " + q);
       if(userA && userA.toLowerCase() === a.toLowerCase()) {
-        const newPin = prompt("Correct! Enter new 4-digit PIN:");
-        if(newPin && newPin.length === 4) { localStorage.setItem('app_pin', newPin); alert("PIN Changed."); location.reload(); }
-      } else alert("Incorrect answer.");
+        const newPin = prompt("Enter new 4-digit PIN:");
+        if(newPin && newPin.length === 4) { localStorage.setItem('app_pin', newPin); location.reload(); }
+      }
     }
 
     function saveSettings() {
@@ -291,10 +309,15 @@
       const a = document.getElementById('setA').value;
       if(p.length === 4) localStorage.setItem('app_pin', p);
       if(q && a) { localStorage.setItem('app_q', q); localStorage.setItem('app_a', a.toLowerCase()); }
-      alert("Settings Saved"); location.reload();
+      alert("Updated"); location.reload();
     }
 
     function toggleModal(id) { document.getElementById(id).classList.toggle('hidden'); }
+    
+    // Set default month to current
+    const now = new Date();
+    document.getElementById('monthFilter').value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2, '0')}`;
+
     initDB().then(d => { db = d; refreshUI(); runLock(); });
   </script>
 </body>
